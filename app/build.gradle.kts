@@ -5,8 +5,9 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.navigation)
     alias(libs.plugins.parcelize)
-    kotlin("kapt")
-    kotlin("plugin.serialization") version "2.0.21"
+    alias(libs.plugins.serialization)
+    alias(libs.plugins.kapt)
+
 }
 
 android {
@@ -52,6 +53,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.ui.graphics.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -64,7 +66,7 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.1.7")
 
     // Navigation
-    val nav_version = "2.9.0"
+    val nav_version = "2.7.6"
     implementation("androidx.navigation:navigation-fragment:$nav_version")
     implementation("androidx.navigation:navigation-ui:$nav_version")
 
@@ -92,5 +94,23 @@ dependencies {
 
     //Paging 3
     implementation ("androidx.paging:paging-runtime:3.2.1")
+
+    // Swipe
+    implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
+    // Kotlin Serialization
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
+    // FlexboxLayout
+    implementation ("com.google.android.flexbox:flexbox:3.0.0")
+
+    //Shimmer
+    implementation ("com.facebook.shimmer:shimmer:0.5.0")
+
+    //CustomTabsIntent
+    implementation ("androidx.browser:browser:1.6.0")
+
+    // Lottie (Animation)
+    implementation("com.airbnb.android:lottie:6.4.0")
 
 }

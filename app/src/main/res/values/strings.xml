@@ -1,5 +1,10 @@
 <resources>
-    <string name="app_name">bookstore-app</string>
+    <string name="app_name">Fahasa Fake</string>
+    <string name="sign_up_question">Bạn chưa có tài khoản?</string>
+    <string name="sign_up_action">Đăng ký tài khoản</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="discount_percent">-%d%%</string>
+    <string name="sold">Đã bán %d</string>
+    <string name="age">%d+</string>
 </resources>

@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    tools:context=".presentation.features.purchase_history.DetailOrderFragment">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/profileTitle"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:text="Chi tiết đơn hàng"
+                android:background="@color/primary"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif"
+                android:textStyle="bold"
+                android:gravity="center_horizontal"
+                android:padding="16dp"
+                android:textColor="@android:color/white"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:src="@drawable/ic_left"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@color/icon_tint_selector"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                android:contentDescription="Quay lại"
+                app:layout_constraintTop_toTopOf="@id/profileTitle"
+                app:layout_constraintBottom_toBottomOf="@id/profileTitle"
+                app:layout_constraintStart_toStartOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@color/primary"
+            app:layout_constraintTop_toBottomOf="@id/layoutHeader"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/layoutHeader"
+            app:layout_constraintBottom_toTopOf="@+id/footerContainer">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <FrameLayout
+                    android:id="@+id/layoutHeaderContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="1dp"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/header"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="4dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:background="@color/white">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:background="@drawable/bg_profile"
+                                android:backgroundTint="@color/primary_2"
+                                android:padding="16dp">
+                                <TextView
+                                    android:id="@+id/tvOrderStatus"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Đơn hàng đang được vận chuyển"
+                                    android:fontFamily="sans-serif"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/primary"
+                                    android:textSize="16sp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Đơn hàng đang được vận chuyển trong vòng 48h"
+                                    android:fontFamily="sans-serif"
+                                    android:textSize="12sp"
+                                    android:layout_marginTop="8dp"
+                                    android:textColor="@color/grey_dark" />
+                            </LinearLayout>
+                            <!-- Nội dung trạng thái đơn hàng -->
+
+                            <!-- RecyclerView nằm dưới thông tin -->
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rvStep"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:nestedScrollingEnabled="false"
+                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                android:orientation="vertical"
+                                tools:listitem="@layout/item_order_step"
+                                tools:itemCount="3"
+                                android:paddingBottom="8dp"
+                                android:paddingStart="16dp"
+                                android:paddingEnd="16dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginBottom="8dp"/>
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </FrameLayout>
+
+                <include
+                    android:id="@+id/includeOrderInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/layoutHeaderContent"
+                    layout="@layout/layout_order_info"/>
+
+                <View
+                    android:id="@+id/view1"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/grey_100"
+                    app:layout_constraintTop_toBottomOf="@+id/includeOrderInfo"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+                <include
+                    android:id="@+id/includeReceiverInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/view1"
+                    layout="@layout/layout_receiver_info"/>
+
+                <View
+                    android:id="@+id/view2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/grey_100"
+                    app:layout_constraintTop_toBottomOf="@id/includeReceiverInfo"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/white"
+                    app:layout_constraintTop_toBottomOf="@id/view2">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Kiện hàng"
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"
+                            android:background="@drawable/bg_text_view_special"
+                            android:gravity="center"
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp"
+                            android:paddingEnd="16dp"
+                            android:paddingStart="16dp"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+
+                        <TextView
+                            android:id="@+id/tvStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:text="Trạng thái"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"
+                            android:gravity="center"
+                            android:layout_marginEnd="16dp"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <View
+                        android:layout_marginTop="16dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="2dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:background="@color/grey_light"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvDetailOrder"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingBottom="16dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        tools:listitem="@layout/item_order_detail"
+                        tools:itemCount="5" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/tvPriceOrder"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="190.292 đ"
+                            android:layout_marginEnd="16dp"
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="bold"
+                            android:textColor="@color/primary"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tổng tiền: "
+                            android:layout_marginEnd="30dp"
+                            app:layout_constraintEnd_toStartOf="@id/tvPriceOrder"
+                            app:layout_constraintTop_toTopOf="@id/tvPriceOrder"
+                            app:layout_constraintBottom_toBottomOf="@id/tvPriceOrder"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/footerContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@android:color/white"
+            android:paddingTop="12dp"
+            android:paddingBottom="20dp"
+            android:elevation="12dp"
+            android:clipToPadding="false"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnRetryPayment"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="18dp"
+                android:layout_marginEnd="18dp"
+                android:text="Thanh toán lại"
+                android:layout_weight="1"
+                android:textSize="16sp"
+                android:visibility="visible"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:fontFamily="sans-serif"
+                android:textStyle="bold"
+                android:background="@drawable/bg_button_primary"
+                android:backgroundTint="?attr/colorPrimary" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnBuyAgain"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="18dp"
+                android:layout_marginEnd="18dp"
+                android:text="Mua lại"
+                android:visibility="gone"
+                android:layout_weight="1"
+                android:textSize="16sp"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:fontFamily="sans-serif"
+                android:textStyle="bold"
+                android:background="@drawable/bg_button_primary"
+                android:backgroundTint="?attr/colorPrimary" />
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnCancelOrder"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="18dp"
+                android:layout_marginEnd="18dp"
+                android:text="Hủy đơn hàng"
+                android:textSize="16sp"
+                android:visibility="gone"
+                android:layout_weight="1"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:fontFamily="sans-serif"
+                android:textStyle="bold"
+                android:background="@drawable/bg_button_primary"
+                android:backgroundTint="@color/red_light" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

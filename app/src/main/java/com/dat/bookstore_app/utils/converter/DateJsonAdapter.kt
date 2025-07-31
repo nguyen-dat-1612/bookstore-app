@@ -1,4 +1,4 @@
-package com.plus.baseandroidapp.utils.converter
+package com.dat.bookstore_app.utils.converter
 
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonDataException

@@ -1,7 +1,8 @@
-package com.plus.baseandroidapp.utils.helpers
+package com.dat.bookstore_app.utils.helpers
 
-import androidx.room.TypeConverter
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
@@ -23,15 +24,13 @@ object DateHelper {
         return dateString?.let { getDateFormat().parse(it) }
     }
 
-    @TypeConverter
-    @JvmStatic
-    fun dateToString(date: Date?): String? {
-        return fromDate(date)
-    }
-
-    @TypeConverter
-    @JvmStatic
-    fun stringToDate(dateString: String?): Date? {
-        return toDate(dateString)
+    fun formatOrderDate(rawDate: String): String {
+        return try {
+            val inputFormatter = DateTimeFormatter.ISO_DATE_TIME
+            val outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+            LocalDateTime.parse(rawDate, inputFormatter).format(outputFormatter)
+        } catch (e: Exception) {
+            rawDate // fallback nếu sai format
+        }
     }
 }

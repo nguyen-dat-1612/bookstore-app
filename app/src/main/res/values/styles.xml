@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="RightSlideDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowAnimationStyle">@style/RightSlideAnimation</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="RightSlideAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_in_right</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_right</item>
+    </style>
+
+    <style name="BottomNavTextAppearance" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="BottomNavStyle" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemIconSize">22dp</item> <!-- Nhỏ hơn mặc định 24dp -->
+    </style>
+
+    <style name="CustomCheckboxStyle" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <!-- Viền checkbox khi chưa chọn -->
+        <item name="colorControlNormal">@color/checkbox_border</item>
+        <!-- Màu nền khi được chọn -->
+        <item name="colorControlActivated">@color/checkbox_background_checked</item>
+        <!-- Màu của dấu check -->
+        <item name="android:textColor">@color/checkbox_check_mark</item>
+    </style>
+
+    <style name="Widget.App.RangeSlider" parent="Widget.MaterialComponents.Slider">
+        <item name="trackHeight">8dp</item>
+        <item name="trackColorActive">@color/primary</item>
+        <item name="trackColorInactive">@color/grey_light</item>
+        <item name="thumbColor">@color/primary</item>
+        <item name="haloColor">@color/primary</item>
+    </style>
+
+    <style name="CustomTabText" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">?android:textColorPrimary</item> <!-- fallback -->
+    </style>
+</resources>

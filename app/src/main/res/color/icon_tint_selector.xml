@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Khi nhấn -->
+    <item android:color="@color/grey_dark" android:state_pressed="true"/>
+
+    <!-- Khi hover (trên Android TV, chuột v.v) -->
+    <item android:color="@color/grey_dark" android:state_hovered="true"/>
+
+    <!-- Bình thường -->
+    <item android:color="@android:color/white"/>
+</selector>

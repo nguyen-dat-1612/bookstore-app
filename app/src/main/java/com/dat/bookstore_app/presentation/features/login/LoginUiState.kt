@@ -1,4 +1,7 @@
 package com.dat.bookstore_app.presentation.features.login
 
-class LoginUiState {
-}
+data class LoginUiState(
+    val email: String = "user@gmail.com",
+    val password: String = "123456",
+    val isSuccess: Boolean = false
+)

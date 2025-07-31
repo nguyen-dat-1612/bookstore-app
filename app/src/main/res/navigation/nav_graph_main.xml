@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_main"
+    app:startDestination="@id/bottomNavFragment">
+
+    <fragment
+        android:id="@+id/bottomNavFragment"
+        android:name="com.dat.bookstore_app.presentation.features.main.BottomNavFragment"
+        android:label="fragment_bottom_nav"
+        tools:layout="@layout/fragment_bottom_nav">
+
+        <action
+            android:id="@+id/action_bottomNavFragment_to_detailBookFragment"
+            app:destination="@id/detailBookFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="book"
+                app:argType="com.dat.bookstore_app.domain.models.Book" />
+        </action>
+        <action
+            android:id="@+id/action_bottomNavFragment_to_settingFragment"
+            app:destination="@id/settingFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_bottomNavFragment_to_searchInputFragment"
+            app:destination="@id/searchInputFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_bottomNavFragment_to_purchaseHistoryFragment"
+            app:destination="@id/purchaseHistoryFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="arg_order_status"
+                app:argType="string"
+                android:defaultValue="ALL"/>
+        </action>
+        <action
+            android:id="@+id/action_bottomNavFragment_to_personalProfileFragment"
+            app:destination="@id/personalProfileFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_bottomNavFragment_to_paymentFragment"
+            app:destination="@id/paymentFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="cartList"
+                app:argType="com.dat.bookstore_app.domain.models.Cart[]" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailBookFragment"
+        android:name="com.dat.bookstore_app.presentation.features.book.DetailBookFragment"
+        android:label="DetailBookFragment" >
+        <action
+            android:id="@+id/action_detailBookFragment_to_bookInformationFragment"
+            app:destination="@id/bookInformationFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="book"
+                app:argType="com.dat.bookstore_app.domain.models.Book" />
+        </action>
+        <action
+            android:id="@+id/action_detailBookFragment_to_paymentFragment"
+            app:destination="@id/paymentFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="cartList"
+                app:argType="com.dat.bookstore_app.domain.models.Cart[]" />
+        </action>
+        <action
+            android:id="@+id/action_detailBookFragment_to_searchInputFragment"
+            app:destination="@id/searchInputFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.dat.bookstore_app.presentation.features.settings.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting" >
+        <action
+            android:id="@+id/action_settingFragment_to_changePasswordFragment"
+            app:destination="@id/changePasswordFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/searchInputFragment"
+        android:name="com.dat.bookstore_app.presentation.features.search.SearchInputFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" >
+        <argument
+            android:name="query"
+            app:argType="string"
+            app:nullable="true" />
+
+        <action
+            android:id="@+id/action_searchInputFragment_to_searchResultFragment"
+            app:destination="@id/searchResultFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="query"
+                app:argType="string" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/searchResultFragment"
+        android:name="com.dat.bookstore_app.presentation.features.search.SearchResultFragment"
+        android:label="fragment_search_result"
+        tools:layout="@layout/fragment_search_result" >
+        <action
+            android:id="@+id/action_searchResultFragment_to_detailBookFragment"
+            app:destination="@id/detailBookFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="book"
+                app:argType="com.dat.bookstore_app.domain.models.Book" />
+        </action>
+        <action
+            android:id="@+id/action_searchResultFragment_to_filterFragment"
+            app:destination="@id/filterFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_searchResultFragment_to_searchInputFragment"
+            app:destination="@id/searchInputFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="query"
+                app:argType="string" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/filterFragment"
+        android:name="com.dat.bookstore_app.presentation.features.search.FilterDialogFragment"
+        android:label="FilterFragment" />
+    <fragment
+        android:id="@+id/changePasswordFragment"
+        android:name="com.dat.bookstore_app.presentation.features.settings.ChangePasswordFragment"
+        android:label="fragment_change_password"
+        tools:layout="@layout/fragment_change_password" />
+    <fragment
+        android:id="@+id/purchaseHistoryFragment"
+        android:name="com.dat.bookstore_app.presentation.features.purchase_history.PurchaseHistoryFragment"
+        android:label="fragment_purchase_history"
+        tools:layout="@layout/fragment_purchase_history" >
+        <argument
+            android:name="arg_order_status"
+            app:argType="string"
+            android:defaultValue="ALL"/>
+        <action
+            android:id="@+id/action_purchaseHistoryFragment_to_detailOrderFragment"
+            app:destination="@id/detailOrderFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="orderId"
+                app:argType="long" />
+        </action>
+        <action
+            android:id="@+id/action_purchaseHistoryFragment_to_paymentFragment"
+            app:destination="@id/paymentFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="cartList"
+                app:argType="com.dat.bookstore_app.domain.models.Cart[]" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/detailOrderFragment"
+        android:name="com.dat.bookstore_app.presentation.features.purchase_history.DetailOrderFragment"
+        android:label="fragment_detail_order"
+        tools:layout="@layout/fragment_detail_order">
+    </fragment>
+    <fragment
+        android:id="@+id/bookInformationFragment"
+        android:name="com.dat.bookstore_app.presentation.features.book.BookInformationFragment"
+        android:label="fragment_book_information"
+        tools:layout="@layout/fragment_book_information">
+        <argument
+            android:name="book"
+            app:argType="com.dat.bookstore_app.domain.models.Book" />
+    </fragment>
+    <fragment
+        android:id="@+id/personalProfileFragment"
+        android:name="com.dat.bookstore_app.presentation.features.profile.PersonalProfileFragment"
+        android:label="fragment_personal_profile"
+        tools:layout="@layout/fragment_personal_profile" />
+    <fragment
+        android:id="@+id/paymentFragment"
+        android:name="com.dat.bookstore_app.presentation.features.payment.PaymentFragment"
+        android:label="fragment_payment"
+        tools:layout="@layout/fragment_payment">
+        <argument
+            android:name="cartList"
+            app:argType="com.dat.bookstore_app.domain.models.Cart[]" />
+        <action
+            android:id="@+id/action_paymentFragment_to_orderSuccessFragment"
+            app:destination="@id/orderSuccessFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+
+            <argument
+                android:name="orderId"
+                app:argType="long" />
+
+        </action>
+        <action
+            android:id="@+id/action_paymentFragment_to_changeAddressFragment"
+            app:destination="@id/changeAddressFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="fullName"
+                app:argType="string" />
+            <argument
+                android:name="address"
+                app:argType="string" />
+            <argument
+                android:name="phone"
+                app:argType="string" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/orderSuccessFragment"
+        android:name="com.dat.bookstore_app.presentation.features.payment.OrderSuccessFragment"
+        android:label="fragment_order_success"
+        tools:layout="@layout/fragment_order_success">
+        <argument
+            android:name="orderId"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_orderSuccessFragment_to_bottomNavFragment"
+            app:destination="@id/bottomNavFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/nav_graph_main"
+            app:popUpToInclusive="true"
+            app:launchSingleTop="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/changeAddressFragment"
+        android:name="com.dat.bookstore_app.presentation.features.payment.ChangeAddressFragment"
+        android:label="fragment_change_address"
+        tools:layout="@layout/fragment_change_address">
+        <argument
+            android:name="fullName"
+            app:argType="string" />
+        <argument
+            android:name="address"
+            app:argType="string" />
+        <argument
+            android:name="phone"
+            app:argType="string" />
+    </fragment>
+
+</navigation>
