@@ -6,13 +6,17 @@ import com.dat.bookstore_app.data.datasource.remote.dto.PaymentResultDTO
 import com.dat.bookstore_app.network.ApiResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface PaymentApi {
 
     @POST("payments")
-    suspend fun createPayment(@Body dto: PaymentRequestDTO): ApiResponse<PaymentResponseDTO>
+    suspend fun createPayment(
+        @Body dto: PaymentRequestDTO,
+        @Header("X-Client-Platform") platform: String = "mobile"
+    ): ApiResponse<PaymentResponseDTO>
 
     @GET("transactions/{transactionId}")
     suspend fun getTransactionStatus(@Path("transactionId") transactionId: String): ApiResponse<PaymentResultDTO>

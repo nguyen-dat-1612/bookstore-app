@@ -1,4 +1,4 @@
-package com.dat.bookstore_app.data.datasource.remote.dto
+package com.dat.bookstore_app.domain.usecases
 
 import com.dat.bookstore_app.domain.models.Cart
 import com.dat.bookstore_app.domain.repository.CartRepository

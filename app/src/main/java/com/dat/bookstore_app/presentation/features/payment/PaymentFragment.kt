@@ -1,6 +1,5 @@
 package com.dat.bookstore_app.presentation.features.payment
 
-
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -172,5 +171,17 @@ class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
         if (transactionId != null && paymentMethod == PaymentMethod.VNPAY) {
             viewModel.checkTransactionStatus(transactionId)
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val deepLinkData = requireActivity().intent?.data
+        val status = deepLinkData?.getQueryParameter("status")
+        val transactionId = deepLinkData?.getQueryParameter("transactionId")
+
+//        when (status) {
+//            "SUCCESS" -> showSuccess(transactionId)
+//            "FAILED" -> showFailure()
+//        }
     }
 }

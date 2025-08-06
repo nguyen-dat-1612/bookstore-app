@@ -58,7 +58,9 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
         btnPersonalProfile.setOnClickListener {
             navController.navigate(BottomNavFragmentDirections.actionBottomNavFragmentToPersonalProfileFragment())
         }
-
+        btnFavorite.setOnClickListener {
+            navController.navigate(BottomNavFragmentDirections.actionBottomNavFragmentToFavoriteListFragment())
+        }
     }
 
     override fun observeViewModel() {
@@ -72,7 +74,6 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
                 viewModel.errorsState.errors.collectLatest {
                     Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
                 }
-
             }
         }
     }

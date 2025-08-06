@@ -23,4 +23,5 @@ interface BookApi {
     suspend fun getBookById(
         @Path("id") id: Long
     ): ApiResponse<BookResponseDTO>
+
 }

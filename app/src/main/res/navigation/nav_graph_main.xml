@@ -66,6 +66,13 @@
                 android:name="cartList"
                 app:argType="com.dat.bookstore_app.domain.models.Cart[]" />
         </action>
+        <action
+            android:id="@+id/action_bottomNavFragment_to_favoriteListFragment"
+            app:destination="@id/favoriteListFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
@@ -238,6 +245,7 @@
         android:name="com.dat.bookstore_app.presentation.features.payment.PaymentFragment"
         android:label="fragment_payment"
         tools:layout="@layout/fragment_payment">
+        <deepLink app:uri="myapp://payment-return" />
         <argument
             android:name="cartList"
             app:argType="com.dat.bookstore_app.domain.models.Cart[]" />
@@ -306,6 +314,24 @@
         <argument
             android:name="phone"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/favoriteListFragment"
+        android:name="com.dat.bookstore_app.presentation.features.favorites.FavoriteListFragment"
+        android:label="fragment_favorite_list"
+        tools:layout="@layout/fragment_favorite_list" >
+
+        <action
+            android:id="@+id/action_favoriteListFragment_to_detailBookFragment"
+            app:destination="@id/detailBookFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="book"
+                app:argType="com.dat.bookstore_app.domain.models.Book" />
+        </action>
     </fragment>
 
 </navigation>

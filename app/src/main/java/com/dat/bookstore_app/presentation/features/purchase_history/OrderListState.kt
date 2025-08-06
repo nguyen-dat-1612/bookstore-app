@@ -10,5 +10,4 @@ data class OrderListState (
     val total: Int = 0,
     val currentFilter: OrderStatus = OrderStatus.ALL,
     val currentSort: Sort = Sort.NEW_DESC
-
 )

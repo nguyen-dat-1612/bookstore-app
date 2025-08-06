@@ -139,6 +139,7 @@ class SearchResultViewModel @Inject constructor(
 
         _actualRequest.value = appliedRequest
     }
+
     fun resetFilters() {
         val resetList = uiState.value.allCategories.map { it.copy(isSelected = false) }
 
@@ -160,6 +161,7 @@ class SearchResultViewModel @Inject constructor(
             pageSize = 10
         )
     }
+
     fun clearData() {
         query = ""
         _actualRequest.value = null
