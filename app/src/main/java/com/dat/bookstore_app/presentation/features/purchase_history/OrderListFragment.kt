@@ -44,7 +44,9 @@ class OrderListFragment : BaseFragment<FragmentOrderListBinding>() {
                 viewModel.cancelOrder(it.id)
             },
             onRetryPaymentClicked = {
-                viewModel.retryPayment(it)
+                navController.navigate(
+                    PurchaseHistoryFragmentDirections.actionPurchaseHistoryFragmentToRetryPaymentFragment(it.id)
+                )
             },
             onBuyAgainClicked = {
                 val buyAgainList = it.orderItems.map {

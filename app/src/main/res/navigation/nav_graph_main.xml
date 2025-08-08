@@ -28,7 +28,11 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="userId"
+                app:argType="long" />
+        </action>
         <action
             android:id="@+id/action_bottomNavFragment_to_searchInputFragment"
             app:destination="@id/searchInputFragment"
@@ -73,6 +77,17 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_bottomNavFragment_to_detailOrderFragment"
+            app:destination="@id/detailOrderFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="orderId"
+                app:argType="long" />
+        </action>
     </fragment>
 
     <fragment
@@ -120,7 +135,8 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
+            app:popExitAnim="@anim/slide_out_right">
+        </action>
     </fragment>
     <fragment
         android:id="@+id/searchInputFragment"
@@ -219,12 +235,29 @@
                 android:name="cartList"
                 app:argType="com.dat.bookstore_app.domain.models.Cart[]" />
         </action>
+        <action
+            android:id="@+id/action_purchaseHistoryFragment_to_retryPaymentFragment"
+            app:destination="@id/retryPaymentFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="orderId"
+                app:argType="long" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/detailOrderFragment"
         android:name="com.dat.bookstore_app.presentation.features.purchase_history.DetailOrderFragment"
         android:label="fragment_detail_order"
         tools:layout="@layout/fragment_detail_order">
+        <argument
+            android:name="orderId"
+            app:argType="long" />
+
+        <deepLink
+            app:uri="bookstore://order/detail?orderId={orderId}" />
     </fragment>
     <fragment
         android:id="@+id/bookInformationFragment"
@@ -331,6 +364,34 @@
             <argument
                 android:name="book"
                 app:argType="com.dat.bookstore_app.domain.models.Book" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/retryPaymentFragment"
+        android:name="com.dat.bookstore_app.presentation.features.payment.RetryPaymentFragment"
+        android:label="fragment_retry_payment"
+        tools:layout="@layout/fragment_retry_payment" >
+<!--        <deepLink app:uri="myapp://payment-return" />-->
+        <action
+            android:id="@+id/action_retryPaymentFragment_to_detailBookFragment"
+            app:destination="@id/detailBookFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="book"
+                app:argType="com.dat.bookstore_app.domain.models.Book" />
+        </action>
+        <action
+            android:id="@+id/action_retryPaymentFragment_to_orderSuccessFragment"
+            app:destination="@id/orderSuccessFragment" app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="orderId"
+                app:argType="long" />
         </action>
     </fragment>
 

@@ -7,6 +7,7 @@ import com.dat.bookstore_app.data.datasource.remote.dto.PagedOrderResponseDTO
 import com.dat.bookstore_app.network.ApiResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -14,6 +15,7 @@ import retrofit2.http.Query
 
 interface OrderApi {
 
+    @Headers("X-Client-Platform: mobile")
     @POST("orders")
     suspend fun createOrder(@Body reqDTO: CreateOrderRequestDTO): ApiResponse<OrderResponseDTO>
 
@@ -30,6 +32,4 @@ interface OrderApi {
 
     @PUT("orders/{orderId}/cancel")
     suspend fun cancelOrder(@Path("orderId") orderId: Long): ApiResponse<CancelOrderResponseDTO>
-
-
 }

@@ -199,9 +199,18 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <include
-        layout="@layout/view_progress_overlay"
-        android:id="@+id/progressOverlay"
+    <TextView
+        android:id="@+id/successBanner"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"
+        android:background="#4CAF50"
+        android:textColor="#FFFFFF"
+        android:padding="12dp"
+        android:text="Thành công!"
+        android:gravity="center"
+        android:visibility="gone"
+        android:translationY="-100dp"
+        android:elevation="4dp"
+        android:textStyle="bold"
+        android:textSize="14sp"/>
 </FrameLayout>

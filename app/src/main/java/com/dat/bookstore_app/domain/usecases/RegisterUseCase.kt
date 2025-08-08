@@ -2,6 +2,7 @@ package com.dat.bookstore_app.domain.usecases
 
 import com.dat.bookstore_app.data.datasource.remote.dto.LoginResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.RegisterRequestDTO
+import com.dat.bookstore_app.data.datasource.remote.dto.RegisterResponseDTO
 import com.dat.bookstore_app.domain.repository.AuthRepository
 import com.dat.bookstore_app.network.Result
 import javax.inject.Inject
@@ -14,7 +15,7 @@ class RegisterUseCase @Inject constructor(
         email: String,
         phone: String,
         password: String
-    ): Result<LoginResponseDTO> {
+    ): Result<RegisterResponseDTO> {
         // Tên
         if (fullName.isBlank()) {
             return Result.Error(

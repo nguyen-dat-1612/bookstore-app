@@ -2,8 +2,10 @@ package com.dat.bookstore_app.presentation.features.main
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.dat.bookstore_app.R
@@ -13,7 +15,6 @@ import com.dat.bookstore_app.presentation.common.base.BaseFragment
 class BottomNavFragment : BaseFragment<FragmentBottomNavBinding>() {
 
     private val sharedViewModel: MainSharedViewModel by activityViewModels()
-
     override fun getViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -53,4 +54,5 @@ class BottomNavFragment : BaseFragment<FragmentBottomNavBinding>() {
             itemId?.let { binding.bottomNav.selectedItemId = it }
         }
     }
+
 }

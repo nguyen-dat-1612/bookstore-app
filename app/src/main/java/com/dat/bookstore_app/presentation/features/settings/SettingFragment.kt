@@ -45,7 +45,13 @@ class SettingFragment : BaseFragment<FragmentSettingBinding>() {
             navController.navigate(R.id.action_settingFragment_to_changePasswordFragment)
         }
 
-
+        switchNotification.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                settingViewModel.fetchAndEnableNotification()
+            } else {
+                settingViewModel.disableNotification()
+            }
+        }
     }
 
     override fun observeViewModel() {

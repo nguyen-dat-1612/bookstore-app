@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.parcelize)
     alias(libs.plugins.serialization)
     alias(libs.plugins.kapt)
-
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -114,4 +114,6 @@ dependencies {
     // Lottie (Animation)
     implementation("com.airbnb.android:lottie:6.4.0")
 
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
 }

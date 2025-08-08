@@ -3,8 +3,10 @@ package com.dat.bookstore_app.presentation.features.payment
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.dat.bookstore_app.data.datasource.remote.dto.CreateOrderRequestDTO
+import com.dat.bookstore_app.data.datasource.remote.dto.DeleteOneCartUseCase
 import com.dat.bookstore_app.data.datasource.remote.dto.OrderItemRequestDTO
 import com.dat.bookstore_app.data.mapper.toOrderItemRequestDTO
+import com.dat.bookstore_app.domain.enums.OrderFlowState
 import com.dat.bookstore_app.domain.enums.PaymentMethod
 import com.dat.bookstore_app.domain.models.Cart
 import com.dat.bookstore_app.domain.models.Order
@@ -28,6 +30,7 @@ class PaymentViewModel @Inject constructor(
     private val createOrderUseCase: CreateOrderUseCase,
     private val createPaymentUseCase: CreatePaymentUseCase,
     private val getTransactionStatusUseCase: GetTransactionStatusUseCase,
+    private val deleteOneCartUseCase: DeleteOneCartUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel<PaymentUiState>(){
 
@@ -56,6 +59,7 @@ class PaymentViewModel @Inject constructor(
                             val user = userInfo.data
                             updateState {
                                 copy(
+                                    isLoadData = true,
                                     fullName = user.fullName ?: "Chưa có tên",
                                     phone = user.phone ?: "Chưa có số",
                                     shippingAddress = user.address ?: "Chưa có địa chỉ",
@@ -97,6 +101,10 @@ class PaymentViewModel @Inject constructor(
                     val order = orderResult.data
                     updateState { copy(order = order) }
 
+                    state.cartList.forEach { cartItem ->
+                        deleteOneCartUseCase(cartItem.book.id)
+                    }
+
                     if (state.paymentMethod == PaymentMethod.VNPAY) {
                         val paymentResult = createPaymentUseCase(
                             orderId = order.id,
@@ -105,36 +113,49 @@ class PaymentViewModel @Inject constructor(
                         )
 
                         if (paymentResult is Result.Success) {
-                            updateState { copy(payment = paymentResult.data) }
+                            updateState {
+                                copy(
+                                    payment = paymentResult.data,
+                                    orderFlowState = OrderFlowState.ORDER_CREATED_VNPAY_REDIRECTED
+                                )
+                            }
                         } else if (paymentResult is Result.Error) {
                             dispatchStateError(paymentResult.throwable!!)
                         }
                     } else {
-                        updateState { copy(paymentSuccess = true) } // COD
+                        updateState {
+                            copy(orderFlowState = OrderFlowState.ORDER_CREATED_COD)
+                        }
                     }
                 } else if (orderResult is Result.Error) {
                     dispatchStateError(orderResult.throwable!!)
                 }
             } finally {
-                dispatchStateLoading(false)
+//                dispatchStateLoading(false)
             }
         }
     }
 
-    fun checkTransactionStatus( transactionId: String) {
+    fun checkTransactionStatus(transactionId: String) {
         viewModelScope.launch(exceptionHandler) {
             dispatchStateLoading(true)
             try {
                 val result = getTransactionStatusUseCase(transactionId)
                 when (result) {
                     is Result.Success -> {
+                        val paymentResult = result.data
+                        val newFlowState = when (paymentResult.status.name) {
+                            "SUCCESS" -> OrderFlowState.ORDER_VNPAY_SUCCESS
+                            "FAILED" -> OrderFlowState.ORDER_VNPAY_FAILED
+                            else -> OrderFlowState.ORDER_VNPAY_PENDING
+                        }
                         updateState {
                             copy(
-                                paymentSuccess = true
+                                paymentResult = paymentResult,
+                                orderFlowState = newFlowState
                             )
                         }
                     }
-
                     is Result.Error -> {
                         dispatchStateError(e = result.throwable!!)
                     }
@@ -144,12 +165,18 @@ class PaymentViewModel @Inject constructor(
             }
         }
     }
+
+    fun handleEmptyTransactionId() {
+        updateState {
+            copy(orderFlowState = OrderFlowState.ORDER_VNPAY_EMPTY_RESULT)
+        }
+    }
+
     fun updatePaymentMethod(method: PaymentMethod) {
         updateState {
             copy(paymentMethod = method)
         }
     }
-
 
     fun updateAddress(fullName: String, phone: String, address: String) {
         updateState {

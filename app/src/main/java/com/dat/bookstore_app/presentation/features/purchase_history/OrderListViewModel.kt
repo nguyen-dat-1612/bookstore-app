@@ -24,8 +24,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class OrderListViewModel @Inject constructor(
     private val getPagedOrdersUseCase: GetPagedOrdersUseCase,
-    private val cancelOrderUseCase: CancelOrderUseCase,
-    private val createPaymentUseCase: CreatePaymentUseCase,
+    private val cancelOrderUseCase: CancelOrderUseCase
 ) : BaseViewModel<OrderListState>(){
 
     override fun initState(): OrderListState = OrderListState()
@@ -82,36 +81,6 @@ class OrderListViewModel @Inject constructor(
                 is Result.Error -> {
                     dispatchStateError(e = result.throwable!!)
                 }
-            }
-        }
-    }
-
-    fun retryPayment(order: Order) {
-        viewModelScope.launch(exceptionHandler) {
-            if (order == null) {
-                dispatchStateError(IllegalStateException("Order is null"))
-                return@launch
-            }
-
-            dispatchStateLoading(true)
-            try {
-                val result = createPaymentUseCase(
-                    orderId = order.id,
-                    amount = order.totalAmount.toLong(),
-                    paymentMethod = order.paymentMethod
-                )
-
-                when (result) {
-                    is Result.Success -> {
-
-                    }
-
-                    is Result.Error -> {
-                        dispatchStateError(e = result.throwable!!)
-                    }
-                }
-            } finally {
-                dispatchStateLoading(false)
             }
         }
     }

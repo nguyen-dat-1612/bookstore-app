@@ -4,6 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.dat.bookstore_app.domain.usecases.GetAccessTokenUseCase
 import com.dat.bookstore_app.presentation.common.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -12,6 +14,10 @@ class MainViewModel @Inject constructor(
     private val getAccessTokenUseCase: GetAccessTokenUseCase
 ): BaseViewModel<MainUiState>() {
     override fun initState() = MainUiState()
+
+
+//    private val _transactionIdFlow = MutableSharedFlow<String>(extraBufferCapacity = 1)
+//    val transactionIdFlow = _transactionIdFlow.asSharedFlow()
 
     init {
         viewModelScope.launch(exceptionHandler) {
@@ -29,4 +35,8 @@ class MainViewModel @Inject constructor(
             copy(isLoggedIn = isLoggedIn)
         }
     }
+
+//    fun emitTransactionId(id: String) {
+//        _transactionIdFlow.tryEmit(id)
+//    }
 }

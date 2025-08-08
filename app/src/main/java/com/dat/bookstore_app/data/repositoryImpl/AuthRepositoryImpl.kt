@@ -7,6 +7,7 @@ import com.dat.bookstore_app.data.datasource.remote.dto.ChangePasswordRequestDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.LoginRequestDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.LoginResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.RegisterRequestDTO
+import com.dat.bookstore_app.data.datasource.remote.dto.RegisterResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.UserLogin
 import com.dat.bookstore_app.data.mapper.toDomain
 import com.dat.bookstore_app.domain.models.User
@@ -34,12 +35,9 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun register(reqUser: RegisterRequestDTO): Result<LoginResponseDTO> {
+    override suspend fun register(reqUser: RegisterRequestDTO): Result<RegisterResponseDTO> {
         return apiCallResponse {
-            val response = authApiNoAuth.register(reqUser)
-            tokenProvider.updateToken(response.data!!.accessToken);
-            userManager.saveUser(response.data.user.toDomain())
-            response
+            authApiNoAuth.register(reqUser)
         }
     }
 

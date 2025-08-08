@@ -91,7 +91,7 @@ inline fun <T, R> Result<T>.map(transform: (T) -> R): Result<R> = when (this) {
     is Result.Error -> Result.Error(code, message, throwable)
 }
 
-fun ImageView.loadUrl(@NonNull url: String) {
+fun ImageView.loadUrl(url: String) {
     this.load(url) {
         crossfade(true)
         placeholder(R.drawable.placeholder)   // ảnh hiển thị tạm khi loading

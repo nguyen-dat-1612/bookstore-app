@@ -1,6 +1,7 @@
 package com.dat.bookstore_app.data.repositoryImpl
 
 import com.dat.bookstore_app.data.datasource.remote.api.UserApi
+import com.dat.bookstore_app.data.datasource.remote.dto.DeviceTokenRequestDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.UserInfoRequestDTO
 import com.dat.bookstore_app.domain.repository.UserRepository
 import com.dat.bookstore_app.network.Result
@@ -22,6 +23,18 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun updateProfile(request: UserInfoRequestDTO): Result<Any?> {
         return apiCallResponse {
             userApi.updateUserInfo(request)
+        }
+    }
+
+    override suspend fun updateDeviceToken(request: DeviceTokenRequestDTO): Result<Any?> {
+        return apiCallResponse {
+            userApi.updateDeviceToken(request)
+        }
+    }
+
+    override suspend fun removeDeviceToken(request: DeviceTokenRequestDTO): Result<Any?> {
+        return apiCallResponse {
+            userApi.removeDeviceToken(request)
         }
     }
 }

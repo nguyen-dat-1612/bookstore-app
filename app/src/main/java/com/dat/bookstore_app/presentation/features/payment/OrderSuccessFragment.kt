@@ -13,8 +13,10 @@ import com.dat.bookstore_app.domain.enums.OrderStatus
 import com.dat.bookstore_app.domain.models.Order
 import com.dat.bookstore_app.presentation.common.base.BaseFragment
 import com.dat.bookstore_app.utils.extension.show
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class OrderSuccessFragment : BaseFragment<FragmentOrderSuccessBinding>() {
 
     private val navController by lazy {
@@ -53,13 +55,20 @@ class OrderSuccessFragment : BaseFragment<FragmentOrderSuccessBinding>() {
 
     private fun setUpStatus(order: Order) = with(binding) {
         if (order.status == OrderStatus.PENDING) {
-            resultTitle.text = "Đơn hàng ${order.status.name} đã được đặt thành công!"
-            resultDescription.text = "Vui lòng thanh toán đơn hàng để xác nhận giao hàng"
+            resultTitle.text = "Đơn hàng #${order.id} đã được đặt thành công!"
+            resultDescription.text = "Đơn hàng đang chờ thanh toán. Vui lòng thanh toán trong vòng 24h."
             backToHomeBtn.show()
         }
         if (order.status == OrderStatus.CONFIRMED) {
-            resultTitle.text = "Đơn hàng ${order.status.name} đã được xác nhận!"
-            resultDescription.text = "Đơn hàng của bạn đang được chuẩn bị để giao cho bạn đúng hạn"
+
+            resultTitle.text = "Đơn hàng  #${order.id} đã được thanh toán!"
+            resultDescription.text = "Đơn hàng của bạn đang được chuẩn bị và sẽ sớm được giao đúng hạn."
+            backToHomeBtn.show()
+        }
+        if (order.status == OrderStatus.CANCELLED) {
+            successAnimationView.setAnimation(R.raw.error_animation)
+            resultTitle.text = "Đơn hàng #${order.id} đã bị hủy!"
+            resultDescription.text = "Đơn hàng của bạn đã bị hủy. Vui lòng đặt lại đơn hàng."
             backToHomeBtn.show()
         }
     }

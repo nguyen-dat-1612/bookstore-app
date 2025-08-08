@@ -230,6 +230,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         super.onDestroyView()
     }
 
+
     companion object {
         private val bannerHandler = Handler(Looper.getMainLooper())
         private var bannerRunnable: Runnable? = null
