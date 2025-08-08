@@ -113,8 +113,4 @@
             android:layout_gravity="center"
             app:tint="@color/black" />
     </LinearLayout>
-
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

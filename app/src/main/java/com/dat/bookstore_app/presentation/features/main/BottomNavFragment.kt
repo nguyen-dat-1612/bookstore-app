@@ -1,6 +1,5 @@
 package com.dat.bookstore_app.presentation.features.main
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
@@ -13,7 +12,6 @@ import com.dat.bookstore_app.presentation.common.base.BaseFragment
 class BottomNavFragment : BaseFragment<FragmentBottomNavBinding>() {
 
     private val sharedViewModel: MainSharedViewModel by activityViewModels()
-
     override fun getViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -28,18 +26,6 @@ class BottomNavFragment : BaseFragment<FragmentBottomNavBinding>() {
         // Đồng bộ BottomNav với NavController con
         binding.bottomNav.setupWithNavController(navController)
     }
-
-//    override fun onSaveInstanceState(outState: Bundle) {
-//        super.onSaveInstanceState(outState)
-//        outState.putInt("SELECTED_TAB", binding.bottomNav.selectedItemId)
-//    }
-//
-//    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-//        super.onViewStateRestored(savedInstanceState)
-//        savedInstanceState?.getInt("SELECTED_TAB")?.let {
-//            binding.bottomNav.selectedItemId = it
-//        }
-//    }
 
     override fun observeViewModel() {
         sharedViewModel.tabToSwitch.observe(viewLifecycleOwner) { tab ->

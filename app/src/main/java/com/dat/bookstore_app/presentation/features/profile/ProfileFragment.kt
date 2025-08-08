@@ -37,7 +37,9 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
 
     override fun setUpView() = with(binding) {
         btnSettings.setOnClickListener {
-            navController.navigate(BottomNavFragmentDirections.actionBottomNavFragmentToSettingFragment())
+            navController.navigate(BottomNavFragmentDirections.
+                actionBottomNavFragmentToSettingFragment(viewModel.uiState.value.user?.id!!)
+            )
         }
         btnOrderList.setOnClickListener {
             navController.navigate(BottomNavFragmentDirections.actionBottomNavFragmentToPurchaseHistoryFragment())
@@ -58,7 +60,9 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
         btnPersonalProfile.setOnClickListener {
             navController.navigate(BottomNavFragmentDirections.actionBottomNavFragmentToPersonalProfileFragment())
         }
-
+        btnFavorite.setOnClickListener {
+            navController.navigate(BottomNavFragmentDirections.actionBottomNavFragmentToFavoriteListFragment())
+        }
     }
 
     override fun observeViewModel() {
@@ -72,14 +76,12 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
                 viewModel.errorsState.errors.collectLatest {
                     Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
                 }
-
             }
         }
     }
 
     private fun setUpProfile(user: User) = with(binding) {
         tvUsername.text = user.fullName
-        userAvatar.loadUrl(user.avatar!!)
-
+        if (user.avatar != null)  userAvatar.loadUrl(user.avatar!!)
     }
 }

@@ -7,4 +7,6 @@ import kotlinx.coroutines.flow.Flow
 interface UserRepository {
     fun getToken(): Flow<String?>
     suspend fun updateProfile(request: UserInfoRequestDTO) : Result<Any?>
+    suspend fun updateDeviceToken(request : DeviceTokenRequestDTO) : Result<Any?>
+    suspend fun removeDeviceToken(request : DeviceTokenRequestDTO) : Result<Any?>
 }

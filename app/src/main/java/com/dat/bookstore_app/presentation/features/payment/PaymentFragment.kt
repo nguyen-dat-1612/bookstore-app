@@ -1,10 +1,12 @@
 package com.dat.bookstore_app.presentation.features.payment
 
-
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +22,7 @@ import com.dat.bookstore_app.databinding.FragmentPaymentBinding
 import com.dat.bookstore_app.presentation.common.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import com.dat.bookstore_app.R
+import com.dat.bookstore_app.domain.enums.OrderFlowState
 import com.dat.bookstore_app.domain.enums.PaymentMethod
 import com.dat.bookstore_app.presentation.common.adapter.BookPaymentAdapter
 import com.dat.bookstore_app.utils.helpers.CurrencyUtils
@@ -30,16 +33,16 @@ import kotlinx.coroutines.launch
 class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
 
     private val viewModel: PaymentViewModel by viewModels()
-
     private val navController by lazy {
         requireActivity().findNavController(R.id.nav_host_main)
     }
-
     private val args by navArgs<PaymentFragmentArgs>()
-
     private val adapter by lazy {
         BookPaymentAdapter()
     }
+    private var deeplinkHandled = false
+    private var fallbackHandled = false
+
     override fun getViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -48,7 +51,9 @@ class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
     }
 
     override fun setUpView() = with(binding) {
-        viewModel.loadData(args.cartList.toList())
+        if (!viewModel.uiState.value.isLoadData) {
+            viewModel.loadData(args.cartList.toList())
+        }
         rvBookPayment.adapter = adapter
 
         btnBack.setOnClickListener {
@@ -56,6 +61,7 @@ class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
         }
 
         btnOrder.setOnClickListener {
+            layoutViewProgress.progressBar.visibility = View.VISIBLE
             viewModel.createOrderAndMaybePay()
         }
 
@@ -87,33 +93,58 @@ class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
     override fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collectLatest { uiState ->
-
-                    setUpUi(uiState)
-
-                    uiState.payment?.let { payment ->
-                        viewModel.clearPayment() // để không bị trigger lại
-
-                        // Mở VNPay qua Chrome Custom Tab
-//                        openPaymentInCustomTab(payment.paymentUrl)
-                        openUrlInChrome(requireActivity(), payment.paymentUrl)
-
+                launch {
+                    viewModel.loadingState.loading.collect {
+                        binding.layoutViewProgress.root.visibility = if (it) View.VISIBLE else View.GONE
+//                        binding.layoutViewProgress.root.visibility = View.VISIBLE
                     }
+                }
+                launch {
+                    viewModel.uiState.collectLatest { uiState ->
 
-                    if (uiState.paymentSuccess) {
-                        Toast.makeText(requireContext(), "Thanh toán thành công", Toast.LENGTH_SHORT).show()
-                        uiState.order?.id?.let {
-                            navController.navigate(
-                                PaymentFragmentDirections
-                                    .actionPaymentFragmentToOrderSuccessFragment(
-                                        orderId = it
-                                    )
-                            )
+                        setUpUi(uiState)
+
+                        uiState.payment?.let { payment ->
+                            viewModel.clearPayment()
+                            openPaymentInCustomTab(payment.paymentUrl)
+//                            openUrlInChrome(requireActivity(), payment.paymentUrl)
                         }
-                    }
-                    when (uiState.paymentMethod) {
-                        PaymentMethod.COD -> binding.momoRadioButton.isChecked = true
-                        PaymentMethod.VNPAY -> binding.vnpayRadioButton.isChecked = true
+
+                        val orderId = uiState.order?.id
+                        val flowState = uiState.orderFlowState
+
+
+                        val shouldNavigate = when (flowState) {
+                            OrderFlowState.ORDER_CREATED_COD -> true
+
+                            OrderFlowState.ORDER_VNPAY_SUCCESS -> {
+                                Toast.makeText(requireContext(), "Thanh toán thành công", Toast.LENGTH_SHORT).show()
+                                true
+                            }
+
+                            OrderFlowState.ORDER_VNPAY_FAILED,
+                            OrderFlowState.ORDER_VNPAY_PENDING,
+                            OrderFlowState.ORDER_VNPAY_EMPTY_RESULT -> {
+                                Toast.makeText(requireContext(), "Đơn hàng đang chờ thanh toán. Vui lòng thanh toán trong vòng 24h.", Toast.LENGTH_LONG).show()
+                                true
+                            }
+
+                            else -> false
+                        }
+
+                        if (shouldNavigate && orderId != null) {
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                navController.navigate(
+                                    PaymentFragmentDirections.actionPaymentFragmentToOrderSuccessFragment(orderId)
+                                )
+                            }, 2000) // 🕒 Delay 2s
+                        }
+
+
+                        when (uiState.paymentMethod) {
+                            PaymentMethod.COD -> binding.momoRadioButton.isChecked = true
+                            PaymentMethod.VNPAY -> binding.vnpayRadioButton.isChecked = true
+                        }
                     }
                 }
             }
@@ -127,12 +158,41 @@ class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
             ?.getLiveData<Triple<String, String, String>>("new_address")
             ?.observe(viewLifecycleOwner) { (fullName, phone, address) ->
                 viewModel.updateAddress(fullName, phone, address)
+
                 navController.currentBackStackEntry?.savedStateHandle
                     ?.remove<Triple<String, String, String>>("new_address")
             }
+
+        navController.currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<Bundle>("deep_link_result")
+            ?.observe(viewLifecycleOwner) { bundle ->
+                deeplinkHandled = true
+
+                val transactionId = bundle.getString("transactionId")
+                if (transactionId != null) {
+                    viewModel.checkTransactionStatus(transactionId)
+                } else {
+                    viewModel.handleEmptyTransactionId()
+                }
+            }
     }
 
-    private fun setUpUi(uiState: PaymentUiState) = with(binding){
+    override fun onResume() {
+        super.onResume()
+
+        val state = viewModel.uiState.value
+        if (
+            state.orderFlowState == OrderFlowState.ORDER_CREATED_VNPAY_REDIRECTED &&
+            !deeplinkHandled &&
+            !fallbackHandled
+        ) {
+            fallbackHandled = true
+            viewModel.handleEmptyTransactionId()
+        }
+    }
+
+    private fun setUpUi(uiState: PaymentUiState) = with(binding) {
         recipientName.text = uiState.fullName
         recipientPhone.text = uiState.phone
         recipientAddress.text = uiState.shippingAddress
@@ -149,28 +209,16 @@ class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
         val customTabsIntent = builder.build()
         customTabsIntent.launchUrl(requireContext(), Uri.parse(url))
     }
+
     fun openUrlInChrome(context: Context, url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
             setPackage("com.android.chrome")
         }
-
-        // Nếu Chrome không có thì mở bằng trình duyệt mặc định
         if (intent.resolveActivity(context.packageManager) != null) {
             context.startActivity(intent)
         } else {
             val fallbackIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             context.startActivity(fallbackIntent)
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        val transactionId = viewModel.uiState.value.payment?.transactionId
-        val paymentMethod = viewModel.uiState.value.payment?.paymentMethod
-
-        if (transactionId != null && paymentMethod == PaymentMethod.VNPAY) {
-            viewModel.checkTransactionStatus(transactionId)
         }
     }
 }

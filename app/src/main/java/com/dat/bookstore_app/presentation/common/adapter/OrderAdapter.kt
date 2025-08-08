@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.DiffUtil
 import com.dat.bookstore_app.R
 import com.dat.bookstore_app.databinding.ItemOrderHistoryBinding
 import com.dat.bookstore_app.domain.enums.OrderStatus
+import com.dat.bookstore_app.domain.enums.PaymentMethod
 import com.dat.bookstore_app.domain.models.Order
 import com.dat.bookstore_app.presentation.common.base.BasePagingAdapter
 import com.dat.bookstore_app.presentation.common.base.BaseViewHolder
@@ -42,6 +43,9 @@ class OrderAdapter(
                 btnSeeDetail.setOnClickListener {
                     onItemClicked(item)
                 }
+                btnBuyAgain.setOnClickListener{
+                    onBuyAgainClicked(item)
+                }
             }
         }
     }
@@ -56,12 +60,14 @@ class OrderAdapter(
 
             when (order.status) {
                 OrderStatus.PENDING -> {
-                    btnRetryPayment.show()
-                    btnCancelOrder.show()
-
-                    btnRetryPayment.setOnClickListener {
-                        onRetryPaymentClicked(order)
+                    if (order.paymentMethod != PaymentMethod.COD) {
+                        btnRetryPayment.show()
+                        btnRetryPayment.setOnClickListener {
+                            onRetryPaymentClicked(order)
+                        }
                     }
+
+                    btnCancelOrder.show()
                     btnCancelOrder.setOnClickListener {
                         onCancelOrderClicked(order)
                     }

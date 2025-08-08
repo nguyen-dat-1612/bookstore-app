@@ -344,6 +344,7 @@
                 android:background="@color/grey_light"/>
             <!-- Dòng 2: Sản phẩm yêu thích -->
             <LinearLayout
+                android:id="@+id/btnFavorite"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:orientation="horizontal"

@@ -178,6 +178,15 @@
                         app:layout_constraintStart_toEndOf="@id/reviewsDivider"
                         app:layout_constraintTop_toTopOf="@id/reviewsDivider" />
 
+                    <ImageView
+                        android:id="@+id/btnFavorite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_favorite"
+                        app:layout_constraintBottom_toBottomOf="@id/tvSold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tvSold" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <View

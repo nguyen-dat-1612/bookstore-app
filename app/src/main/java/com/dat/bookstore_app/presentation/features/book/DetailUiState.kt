@@ -6,4 +6,7 @@ data class DetailUiState(
     val book: Book? = null,
     val count: Int = 1,
     val addCartSuccess: Boolean = false,
+    val addFavoriteSuccess: Boolean = false,
+    val isFavorite: Boolean = false,
+    val favorite: Favorite? = null
 )

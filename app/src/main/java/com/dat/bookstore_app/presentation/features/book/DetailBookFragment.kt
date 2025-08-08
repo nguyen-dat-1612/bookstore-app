@@ -84,6 +84,13 @@ class DetailBookFragment : BaseFragment<FragmentDetailBookBinding>() {
                 binding.tvImageCounter.text = "${position + 1}/$total"
             }
         })
+        btnFavorite.setOnClickListener {
+            if (viewModel.uiState.value.isFavorite) {
+                viewModel.deleteFavorite()
+            } else {
+                viewModel.addToFavorite()
+            }
+        }
 
     }
     
@@ -113,6 +120,15 @@ class DetailBookFragment : BaseFragment<FragmentDetailBookBinding>() {
                     }
                     if (it.addCartSuccess) {
                         showToast("Thêm vào giỏ hàng thành công")
+                    }
+                    if (it.addFavoriteSuccess) {
+                        binding.btnFavorite.setImageResource(R.drawable.ic_favorite_fill)
+                        showToast("Thêm vào danh sách yêu thích thành công")
+                    }
+                    if (it.isFavorite) {
+                        binding.btnFavorite.setImageResource(R.drawable.ic_favorite_fill)
+                    } else {
+                        binding.btnFavorite.setImageResource(R.drawable.ic_favorite)
                     }
 
                 }

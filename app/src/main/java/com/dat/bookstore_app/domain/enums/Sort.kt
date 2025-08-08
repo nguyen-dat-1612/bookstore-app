@@ -10,7 +10,5 @@ enum class Sort(val queryParam: String) {
     PRICE_ASC("price,asc"),
     PRICE_DESC("price,desc");
 
-
-
     override fun toString(): String = queryParam
 }

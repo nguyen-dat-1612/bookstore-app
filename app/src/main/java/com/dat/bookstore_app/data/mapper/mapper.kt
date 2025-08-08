@@ -4,10 +4,12 @@ import androidx.core.text.HtmlCompat
 import com.dat.bookstore_app.data.datasource.remote.dto.BookResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.CartResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.CategoryResponseDTO
+import com.dat.bookstore_app.data.datasource.remote.dto.FavoriteResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.OrderItemRequestDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.OrderItemResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.OrderResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.PagedBookResponseDTO
+import com.dat.bookstore_app.data.datasource.remote.dto.PagedFavoriteResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.PagedOrderResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.PaymentResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.PaymentResultDTO
@@ -17,9 +19,11 @@ import com.dat.bookstore_app.domain.models.Book
 import com.dat.bookstore_app.domain.models.Cart
 import com.dat.bookstore_app.domain.models.Category
 import com.dat.bookstore_app.domain.models.CategoryUiModel
+import com.dat.bookstore_app.domain.models.Favorite
 import com.dat.bookstore_app.domain.models.Order
 import com.dat.bookstore_app.domain.models.OrderItem
 import com.dat.bookstore_app.domain.models.PagedBook
+import com.dat.bookstore_app.domain.models.PagedFavorite
 import com.dat.bookstore_app.domain.models.PagedOrder
 import com.dat.bookstore_app.domain.models.Payment
 import com.dat.bookstore_app.domain.models.PaymentResult
@@ -185,4 +189,24 @@ fun List<Cart>.toOrderItemRequestDTO(): List<OrderItemRequestDTO> {
         )
     }
 }
+
+fun PagedFavoriteResponseDTO.toDomain() : PagedFavorite {
+    return PagedFavorite(
+        favorites = favorites.map { it.toDomain()},
+        current = paginationDTO.current,
+        pageSize = paginationDTO.pageSize,
+        pages = paginationDTO.pages,
+        total = paginationDTO.total
+    )
+}
+
+fun FavoriteResponseDTO.toDomain() : Favorite {
+    return Favorite(
+        id = id,
+        userId = userId,
+        book = book.toDomain()
+    )
+}
+
+
 

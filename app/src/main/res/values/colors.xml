@@ -36,4 +36,6 @@
     <color name="checkbox_border">#B0BEC5</color> <!-- viền xám nhạt -->
     <color name="checkbox_background_checked">#FFCA28</color> <!-- nền vàng khi chọn -->
     <color name="checkbox_check_mark">#000000</color> <!-- dấu check màu đen -->
+
+    <color name="colorAccent">#FF4081</color>
 </resources>

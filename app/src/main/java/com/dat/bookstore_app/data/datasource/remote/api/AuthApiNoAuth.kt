@@ -3,6 +3,7 @@ package com.dat.bookstore_app.data.datasource.remote.api
 import com.dat.bookstore_app.data.datasource.remote.dto.LoginRequestDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.LoginResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.RegisterRequestDTO
+import com.dat.bookstore_app.data.datasource.remote.dto.RegisterResponseDTO
 import com.dat.bookstore_app.network.ApiResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -16,7 +17,7 @@ interface AuthApiNoAuth {
 
     @Headers("No-Authentication: true")
     @POST("auth/register")
-    suspend fun register(@Body reqUser: RegisterRequestDTO): ApiResponse<LoginResponseDTO>
+    suspend fun register(@Body reqUser: RegisterRequestDTO): ApiResponse<RegisterResponseDTO>
 
     @Headers("No-Authentication: true")
     @GET("auth/refresh")

@@ -1,9 +1,13 @@
 package com.dat.bookstore_app.domain.enums
 
-enum class TransactionStatus {
-    PENDING, // Giao dịch đang chờ xử lý
-    SUCCESS, // Giao dịch thành công
-    FAILED,  // Giao dịch thất bại
-    REFUNDED, // Giao dịch đã hoàn tiền
-    CANCELLED // Giao dịch bị hủy
+import com.squareup.moshi.Json
+
+enum class TransactionStatus(val title: String) {
+    PENDING("Đang chờ xử lý"),
+    SUCCESS("Thành công"),
+    FAILED("Thất bại"),
+    REFUNDED("Đã hoàn tiền"),
+
+    @Json(name = "CANCELLED")
+    CANCELLED("Đã huỷ")
 }

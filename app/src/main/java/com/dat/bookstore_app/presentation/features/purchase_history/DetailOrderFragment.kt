@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dat.bookstore_app.R
 import com.dat.bookstore_app.databinding.FragmentDetailOrderBinding
 import com.dat.bookstore_app.domain.enums.OrderStatus
+import com.dat.bookstore_app.domain.enums.PaymentMethod
+import com.dat.bookstore_app.domain.models.Cart
 import com.dat.bookstore_app.domain.models.Order
 import com.dat.bookstore_app.presentation.common.adapter.OrderDetailAdapter
 import com.dat.bookstore_app.presentation.common.adapter.StepAdapter
@@ -61,6 +63,32 @@ class DetailOrderFragment : BaseFragment<FragmentDetailOrderBinding>() {
         }
         rvDetailOrder.adapter = detailAdapter
         rvDetailOrder.layoutManager = LinearLayoutManager(requireContext())
+        btnBuyAgain.setOnClickListener {
+            val buyAgainList = viewModel.uiState.value.order!!.orderItems.map {
+                Cart(
+                    id = it.book.id,
+                    quantity = it.quantity,
+                    createdAt = "",
+                    updatedAt = "",
+                    book = it.book,
+                    isSelected = true
+                )
+            }.toTypedArray()
+
+            val action = PurchaseHistoryFragmentDirections
+                .actionPurchaseHistoryFragmentToPaymentFragment( cartList = buyAgainList)
+            binding.root.findNavController().navigate(action)
+        }
+        btnRetryPayment.setOnClickListener{
+            navController.navigate(
+                PurchaseHistoryFragmentDirections.actionPurchaseHistoryFragmentToRetryPaymentFragment(
+                    viewModel.uiState.value.order!!.id
+                )
+            )
+        }
+        btnCancelOrder.setOnClickListener {
+            viewModel.cancelOrder()
+        }
     }
 
     override fun observeViewModel() {
@@ -112,10 +140,12 @@ class DetailOrderFragment : BaseFragment<FragmentDetailOrderBinding>() {
 
         when (order.status) {
             OrderStatus.PENDING -> {
-                btnRetryPayment.show()
-                btnCancelOrder.show()
+                if (order.paymentMethod != PaymentMethod.COD) {
+                    btnRetryPayment.show()
+                    btnRetryPayment.setOnClickListener { viewModel.createPayment() }
+                }
 
-                btnRetryPayment.setOnClickListener { viewModel.createPayment() }
+                btnCancelOrder.show()
                 btnCancelOrder.setOnClickListener { viewModel.cancelOrder() }
             }
 
