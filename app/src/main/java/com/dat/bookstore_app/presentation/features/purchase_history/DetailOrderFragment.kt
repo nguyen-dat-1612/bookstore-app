@@ -22,10 +22,10 @@ import com.dat.bookstore_app.presentation.common.adapter.OrderDetailAdapter
 import com.dat.bookstore_app.presentation.common.adapter.StepAdapter
 import com.dat.bookstore_app.presentation.common.base.BaseFragment
 import com.dat.bookstore_app.utils.extension.hide
-import com.dat.bookstore_app.utils.extension.mapSteps
-import com.dat.bookstore_app.utils.extension.show
 import com.dat.bookstore_app.utils.helpers.CurrencyUtils
 import com.dat.bookstore_app.utils.helpers.DateHelper
+import com.dat.bookstore_app.utils.extension.show
+import com.dat.bookstore_app.utils.extension.mapSteps
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

@@ -13,6 +13,7 @@ import com.dat.bookstore_app.presentation.common.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import javax.inject.Inject
 import kotlin.math.max
 
@@ -30,40 +31,42 @@ class DetailBookViewModel @Inject constructor(
     val book: Book = savedStateHandle.get<Book>("book")!!
 
     init {
+        loadBookDetail(book.id)
+    }
+
+    private fun loadBookDetail(bookId: Long) {
         viewModelScope.launch(exceptionHandler) {
             dispatchStateLoading(true)
-
             try {
-                val bookId = book.id
-                val (bookResult, favResult) = kotlinx.coroutines.coroutineScope {
-                    val bookDeferred = async { getBookById(bookId) }
-                    val favDeferred = async { checkFavoriteUseCase(bookId) }
-                    Pair(bookDeferred.await(), favDeferred.await())
+                when (val bookResult = getBookById(bookId)) {
+                    is Result.Success -> updateState { copy(book = bookResult.data) }
+                    is Result.Error -> dispatchStateError(bookResult.throwable!!)
                 }
-
-                if (bookResult is Result.Success) {
-                    updateState { copy(book = bookResult.data) }
-                } else if (bookResult is Result.Error) {
-                    dispatchStateError(bookResult.throwable!!)
-                }
-                if (favResult is Result.Success) {
-                    val favoriteData = favResult.data
-                    updateState {
-                        copy(
-                            isFavorite = if (favoriteData == null) false else true,
-                            favorite = favoriteData
-                        )
-                    }
-                } else if (favResult is Result.Error) {
-                    dispatchStateError(favResult.throwable!!)
-                }
-
             } finally {
                 dispatchStateLoading(false)
             }
         }
     }
 
+    fun loadFavoriteState(bookId: Long) {
+        viewModelScope.launch(exceptionHandler) {
+            when (val favResult = checkFavoriteUseCase(bookId)) {
+                is Result.Success -> {
+                    val favoriteData = favResult.data
+                    updateState {
+                        copy(
+                            isFavorite = favoriteData != null,
+                            favorite = favoriteData
+                        )
+                    }
+                }
+                is Result.Error -> {
+                    // Không dispatchStateError để tránh hiển thị lỗi không cần thiết
+                    updateState { copy(isFavorite = false, favorite = null) }
+                }
+            }
+        }
+    }
     fun increase() {
         updateState {
             copy(count = count + 1)

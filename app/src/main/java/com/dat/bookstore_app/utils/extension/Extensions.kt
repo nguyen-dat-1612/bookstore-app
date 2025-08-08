@@ -1,4 +1,4 @@
-package com.plus.baseandroidapp.utils.extension
+package com.dat.bookstore_app.utils.extension
 
 import android.Manifest
 import android.content.Context
@@ -8,10 +8,8 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.StrikethroughSpan
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.NonNull
 import androidx.annotation.RequiresPermission
 import androidx.appcompat.widget.SearchView
 import android.graphics.Color

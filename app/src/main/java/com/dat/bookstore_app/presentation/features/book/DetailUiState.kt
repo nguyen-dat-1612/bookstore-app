@@ -1,6 +1,7 @@
 package com.dat.bookstore_app.presentation.features.book
 
 import com.dat.bookstore_app.domain.models.Book
+import com.dat.bookstore_app.domain.models.Favorite
 
 data class DetailUiState(
     val book: Book? = null,

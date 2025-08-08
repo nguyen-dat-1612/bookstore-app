@@ -17,7 +17,7 @@ import javax.inject.Singleton
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.Json
 
-private val Context.dataStore by preferencesDataStore(name = "secure_user")
+private val Context.dataStore by preferencesDataStore(name = "secure-app")
 
 @Singleton
 class UserManager @Inject constructor(

@@ -61,7 +61,7 @@ class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
         }
 
         btnOrder.setOnClickListener {
-            layoutViewProgress.progressBar.visibility = View.VISIBLE
+            requireActivity().findViewById<View>(R.id.progressOverlay).visibility = View.VISIBLE
             viewModel.createOrderAndMaybePay()
         }
 
@@ -95,7 +95,7 @@ class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.loadingState.loading.collect {
-                        binding.layoutViewProgress.root.visibility = if (it) View.VISIBLE else View.GONE
+                        requireActivity().findViewById<View>(R.id.progressOverlay).visibility = if (it) View.VISIBLE else View.GONE
 //                        binding.layoutViewProgress.root.visibility = View.VISIBLE
                     }
                 }

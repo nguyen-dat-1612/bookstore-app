@@ -17,6 +17,8 @@ import com.dat.bookstore_app.domain.models.Cart
 import com.dat.bookstore_app.presentation.common.adapter.ImagePagerAdapter
 import com.dat.bookstore_app.presentation.common.base.BaseFragment
 import com.dat.bookstore_app.presentation.features.main.MainSharedViewModel
+import com.dat.bookstore_app.presentation.features.main.MainViewModel
+import com.dat.bookstore_app.utils.extension.hide
 import com.dat.bookstore_app.utils.extension.setDiscountedPrice
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -27,7 +29,7 @@ class DetailBookFragment : BaseFragment<FragmentDetailBookBinding>() {
 
     private val viewModel: DetailBookViewModel by viewModels()
     private val sharedViewModel: MainSharedViewModel by activityViewModels()
-
+    private val mainViewModel: MainViewModel by activityViewModels()
     private val imagePagerAdapter: ImagePagerAdapter by lazy {
         ImagePagerAdapter(emptyList())
     }
@@ -90,6 +92,11 @@ class DetailBookFragment : BaseFragment<FragmentDetailBookBinding>() {
             } else {
                 viewModel.addToFavorite()
             }
+        }
+        if (mainViewModel.uiState.value.isLoggedIn) {
+            viewModel.loadFavoriteState(viewModel.book.id)
+        } else {
+            btnFavorite.hide()
         }
 
     }

@@ -11,7 +11,7 @@ import javax.inject.Singleton
 @Singleton
 class TokenProvider @Inject constructor(
     private val userManager: UserManager,
-    private val authApi: AuthApiNoAuth  // inject thay vì tạo riêng
+    private val authApi: AuthApiNoAuth
 ) {
     @Volatile
     private var cachedToken: String? = null
