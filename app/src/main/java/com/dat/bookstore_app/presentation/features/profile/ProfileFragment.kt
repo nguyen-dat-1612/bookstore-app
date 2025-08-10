@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -94,6 +95,17 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
                 BottomNavFragmentDirections.actionBottomNavFragmentToFavoriteListFragment()
             )
         }
+        layoutWarning.setOnClickListener {
+            navController.navigate(
+                BottomNavFragmentDirections.actionBottomNavFragmentToCreatePasswordFragment()
+            )
+        }
+        toCreatePassword.setOnClickListener {
+            navController.navigate(
+                BottomNavFragmentDirections.actionBottomNavFragmentToCreatePasswordFragment()
+            )
+        }
+
     }
 
     override fun observeViewModel() {
@@ -102,6 +114,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
                 viewModel.uiState.collectLatest { state ->
                     if (state.user != null) {
                         setUpProfile(state.user)
+                        viewModel.fetchAndEnableNotification()
                         requestNotificationPermission()
                     }
                 }
@@ -119,13 +132,15 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
         } else {
             userAvatar.load(R.drawable.ic_placeholder_avatar)
         }
+        if (user.noPassword != null && user.noPassword) {
+            layoutWarning.visibility = View.VISIBLE
+        }
     }
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
                 Toast.makeText(requireActivity(), "Đã bật quyền thông báo", Toast.LENGTH_SHORT).show()
-                viewModel.fetchAndEnableNotification()
             } else {
                 Toast.makeText(requireActivity(), "Quyền thông báo bị từ chối", Toast.LENGTH_SHORT).show()
 //                openNotificationSettings()

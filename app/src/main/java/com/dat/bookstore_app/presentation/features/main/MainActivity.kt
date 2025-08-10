@@ -1,11 +1,16 @@
 package com.dat.bookstore_app.presentation.features.main
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.View
 import androidx.activity.viewModels
 import androidx.core.os.bundleOf
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
@@ -14,11 +19,15 @@ import com.dat.bookstore_app.databinding.ActivityMainBinding
 import com.dat.bookstore_app.presentation.common.base.BaseActivity
 import com.dat.bookstore_app.utils.extension.setStatusBarColorCompat
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     val viewModel: MainViewModel by viewModels()
+    val sharedViewModel: MainSharedViewModel by viewModels()
     private lateinit var navController: NavController
 
     override fun getViewBinding(): ActivityMainBinding {
@@ -39,47 +48,91 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         }
     }
 
-    override fun observeViewModel() {}
-
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        if (viewModel.uiState.value.isLoggedIn) {
-            handleDeepLink(intent)
+    override fun observeViewModel() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collectLatest { state ->
+                    if (state.isLoggedIn) {
+                        binding.progressOverlayWhite.root.visibility = View.VISIBLE
+                        delay(500)
+                        binding.progressOverlayWhite.root.visibility = View.GONE
+                        // Nếu cần thì ở đây gọi navigate hoặc event khác
+                    }
+                }
+            }
         }
     }
 
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleDeepLink(intent)
+    }
+
     fun handleDeepLink(intent: Intent?) {
-        val orderId = intent?.extras?.getString("order_id")
-        if (!orderId.isNullOrEmpty()) {
-            Log.d("Notifications handleDeepLink", "id: $orderId")
-            val navOptions = NavOptions.Builder()
-                .setEnterAnim(R.anim.slide_in_right)
-                .setExitAnim(R.anim.slide_out_left)
-                .setPopEnterAnim(R.anim.slide_in_left)
-                .setPopExitAnim(R.anim.slide_out_right)
-                .build()
+        if (viewModel.uiState.value.isLoggedIn) {
+            val orderId = intent?.extras?.getString("order_id")
+            if (!orderId.isNullOrEmpty()) {
+                Log.d("Notifications handleDeepLink", "id: $orderId")
+                val navOptions = NavOptions.Builder()
+                    .setEnterAnim(R.anim.slide_in_right)
+                    .setExitAnim(R.anim.slide_out_left)
+                    .setPopEnterAnim(R.anim.slide_in_left)
+                    .setPopExitAnim(R.anim.slide_out_right)
+                    .build()
 
-            Handler(Looper.getMainLooper()).postDelayed({
-                navController.navigate(
-                    R.id.detailOrderFragment,
-                    bundleOf("orderId" to orderId.toLong()),
-                    navOptions
-                )
-            }, 500)
-        }
+                Handler(Looper.getMainLooper()).postDelayed({
+                    navController.navigate(
+                        R.id.detailOrderFragment,
+                        bundleOf("orderId" to orderId.toLong()),
+                        navOptions
+                    )
+                }, 500)
+            }
 
-        intent?.data?.let { uri ->
-            val navHostFragment = supportFragmentManager
-                .findFragmentById(R.id.nav_host_main) as NavHostFragment
-            val navController = navHostFragment.navController
+            intent?.data?.let { uri ->
+                val navHostFragment = supportFragmentManager
+                    .findFragmentById(R.id.nav_host_main) as NavHostFragment
+                val navController = navHostFragment.navController
 
-            if (uri.scheme == "myapp" && uri.host == "payment-return") {
-                val transactionId = uri.getQueryParameter("transactionId") ?: ""
-                navController.currentBackStackEntry?.savedStateHandle
-                    ?.set("deep_link_result", bundleOf("transactionId" to transactionId))
-                return
+                if (uri.scheme == "myapp" && uri.host == "payment-return") {
+                    val transactionId = uri.getQueryParameter("transactionId") ?: ""
+                    navController.currentBackStackEntry?.savedStateHandle
+                        ?.set("deep_link_result", bundleOf("transactionId" to transactionId))
+                    return
+                }
             }
         }
+
+        if (!viewModel.uiState.value.isLoggedIn) {
+            intent?.data?.let { uri ->
+                val navHostFragment = supportFragmentManager
+                    .findFragmentById(R.id.nav_host_main) as NavHostFragment
+                val navController = navHostFragment.navController
+
+                if (uri.scheme == "myapp" && uri.host == "verify-return") {
+                    val status = uri.getQueryParameter("status") ?: ""
+                    val message =  uri.getQueryParameter("message") ?: ""
+                    sharedViewModel.switchTab("auth")
+
+                    val navOptions = NavOptions.Builder()
+                        .setEnterAnim(R.anim.slide_in_right)
+                        .setExitAnim(R.anim.slide_out_left)
+                        .setPopEnterAnim(R.anim.slide_in_left)
+                        .setPopExitAnim(R.anim.slide_out_right)
+                        .build()
+
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        navController.navigate(
+                            R.id.verifyStateFragment,
+                            bundleOf("status" to status, "message" to message),
+                            navOptions
+                        )
+                    }, 500)
+                }
+            }
+        }
+
     }
 
     private fun processIntent(intent: Intent?) {

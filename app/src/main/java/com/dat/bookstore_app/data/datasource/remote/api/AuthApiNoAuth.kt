@@ -16,7 +16,10 @@ interface AuthApiNoAuth {
     @POST("auth/login")
     suspend fun login(@Body reqLoginDTO: LoginRequestDTO): ApiResponse<LoginResponseDTO>
 
-    @Headers("No-Authentication: true")
+    @Headers(
+        "X-Client-Platform: mobile",
+        "No-Authentication: true"
+    )
     @POST("auth/register")
     suspend fun register(@Body reqUser: RegisterRequestDTO): ApiResponse<RegisterResponseDTO>
 

@@ -38,9 +38,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+<!--            <intent-filter>-->
+<!--                <action android:name="MAIN_ACTIVITY" />-->
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--            </intent-filter>-->
+
             <intent-filter>
-                <action android:name="MAIN_ACTIVITY" />
+                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="myapp"
+                    android:host="verify-return" />
             </intent-filter>
 
             <!-- Deeplink từ intent://payment-return -->
@@ -65,6 +74,7 @@
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="fullSensor"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
         <service
             android:name=".services.MyFirebaseMessagingService"
             android:exported="false">

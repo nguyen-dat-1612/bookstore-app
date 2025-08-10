@@ -1,4 +1,4 @@
-package com.dat.bookstore_app.presentation.features.login
+package com.dat.bookstore_app.presentation.features.auth
 
 import androidx.lifecycle.viewModelScope
 import com.dat.bookstore_app.domain.usecases.LoginGoogleUseCase
@@ -18,17 +18,22 @@ class LoginViewModel @Inject constructor(
     override fun initState() = LoginUiState()
 
     fun onLogin() {
+        updateState {
+            copy(isLoading = true)
+        }
         viewModelScope.launch(exceptionHandler){
             dispatchStateLoading(true)
             when(loginUseCase(uiState.value.email, uiState.value.password)){
                 is Result.Success -> {
                     updateState {
-                        copy(isSuccess = true)
+                        copy(isSuccess = true,
+                            isLoading = false)
                     }
                 }
                 is Result.Error -> {
                     updateState {
-                        copy(isSuccess = false)
+                        copy(isSuccess = false,
+                            isLoading = false)
                     }
                 }
             }

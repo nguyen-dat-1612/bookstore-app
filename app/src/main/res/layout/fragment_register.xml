@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#F8F9FA"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".presentation.features.register.RegisterFragment">
+    tools:context=".presentation.features.auth.RegisterFragment">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -165,9 +165,9 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"
-            android:layout_height="54dp"
+            android:layout_height="48dp"
             android:enabled="false"
-            android:background="@drawable/bg_button_register"
+            android:background="@drawable/bg_button_circle_primary"
             style="@style/Widget.AppCompat.Button"
             android:text="Đăng ký"
             android:fontFamily="sans-serif"

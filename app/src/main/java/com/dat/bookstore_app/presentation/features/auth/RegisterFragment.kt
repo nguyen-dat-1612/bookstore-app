@@ -1,9 +1,8 @@
-package com.dat.bookstore_app.presentation.features.register
+package com.dat.bookstore_app.presentation.features.auth
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -61,6 +60,7 @@ class RegisterFragment : BaseFragment<FragmentRegisterBinding>() {
                     registerViewModel.uiState.collectLatest {
                         if (it.isSuccess) {
                             showSuccessBanner("Đăng ký thành công, vui lòng kiểm tra email để xác nhận")
+                            resetInputs()
                         }
                     }
                 }
@@ -118,6 +118,15 @@ class RegisterFragment : BaseFragment<FragmentRegisterBinding>() {
             imm.hideSoftInputFromWindow(view.windowToken, 0)
             view.clearFocus()
         }
+    }
+
+    private fun resetInputs() = with(binding) {
+        nameText.text?.clear()
+        emailText.text?.clear()
+        phoneText.text?.clear()
+        passwordText.text?.clear()
+        tvConfirmPassword.text?.clear()
+        btnLogin.isEnabled = false
     }
 
 

@@ -14,4 +14,5 @@ class MainSharedViewModel @Inject constructor() : ViewModel() {
     fun switchTab(tab: String) {
         _tabToSwitch.value = tab
     }
+
 }

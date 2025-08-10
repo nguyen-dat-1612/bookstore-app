@@ -102,6 +102,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_bottomNavFragment_to_createPasswordFragment"
+            app:destination="@id/createPasswordFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
@@ -434,6 +441,14 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_newFragment_to_verifyStateFragment"
+            app:destination="@id/verifyStateFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+        </action>
     </fragment>
     <fragment
         android:id="@+id/popularFragment"
@@ -464,5 +479,10 @@
         android:name="com.dat.bookstore_app.presentation.features.settings.CreatePasswordFragment"
         android:label="fragment_create_password"
         tools:layout="@layout/fragment_create_password" />
+    <fragment
+        android:id="@+id/verifyStateFragment"
+        android:name="com.dat.bookstore_app.presentation.features.auth.VerifyStateFragment"
+        android:label="fragment_verify_state"
+        tools:layout="@layout/fragment_verify_state" />
 
 </navigation>

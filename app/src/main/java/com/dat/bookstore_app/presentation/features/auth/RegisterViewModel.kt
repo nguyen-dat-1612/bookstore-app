@@ -1,6 +1,5 @@
-package com.dat.bookstore_app.presentation.features.register
+package com.dat.bookstore_app.presentation.features.auth
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.dat.bookstore_app.domain.usecases.RegisterUseCase
 import com.dat.bookstore_app.network.Result

@@ -1,14 +1,17 @@
 package com.dat.bookstore_app.presentation.features.account
 
+import android.app.AlertDialog
+import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.dat.bookstore_app.databinding.FragmentAuthTabBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import com.dat.bookstore_app.presentation.common.base.BaseFragment
-import com.dat.bookstore_app.presentation.features.login.LoginFragment
-import com.dat.bookstore_app.presentation.features.register.RegisterFragment
+import com.dat.bookstore_app.presentation.features.auth.LoginFragment
+import com.dat.bookstore_app.presentation.features.auth.RegisterFragment
 
 class AuthTabFragment : BaseFragment<FragmentAuthTabBinding>() {
     override fun getViewBinding(
@@ -42,6 +45,5 @@ class AuthTabFragment : BaseFragment<FragmentAuthTabBinding>() {
     }
 
     override fun observeViewModel() {
-
     }
 }

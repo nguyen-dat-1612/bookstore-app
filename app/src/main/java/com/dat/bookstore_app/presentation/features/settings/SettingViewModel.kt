@@ -47,47 +47,28 @@ class SettingViewModel @Inject constructor(
     fun logout() {
         viewModelScope.launch(exceptionHandler) {
             dispatchStateLoading(true)
-            disableNotification()
+            // Gọi disableNotification đồng bộ bằng cách không launch coroutine con riêng
+            val token = FirebaseMessaging.getInstance().token.await()
+            Log.d("SettingViewModel", "Token: $token")
+            val disableResult = removeTokenUseCase(userId, token)
+            if (disableResult is Result.Success) {
+                updateState {
+                    copy(isNotificationEnabled = false, currentToken = null)
+                }
+            } else if (disableResult is Result.Error) {
+                dispatchStateError(disableResult.throwable!!)
+                // Có thể vẫn logout hoặc dừng, tùy ý bạn
+            }
+
             val result = logoutUseCase()
             when (result) {
-                is Result.Success -> {
-                    updateState {
-                        copy(LogoutSuccess = true)
-                    }
-                }
-
+                is Result.Success -> updateState { copy(LogoutSuccess = true) }
                 is Result.Error -> {
-                    updateState {
-                        copy(LogoutSuccess = true)
-                    }
+                    updateState { copy(LogoutSuccess = true) }
                     dispatchStateError(result.throwable!!)
                 }
             }
             dispatchStateLoading(false)
-        }
-    }
-
-    fun disableNotification() {
-        viewModelScope.launch(exceptionHandler) {
-            dispatchStateLoading(true)
-            try {
-                val token = FirebaseMessaging.getInstance().token.await()
-                Log.d("SettingViewModel", "Token: $token")
-                val result = removeTokenUseCase(userId, token)
-                when (result) {
-                    is Result.Success -> {
-                        updateState {
-                            copy(isNotificationEnabled = false, currentToken = null)
-                        }
-                    }
-
-                    is Result.Error -> {
-                        dispatchStateError(result.throwable!!)
-                    }
-                }
-            } finally {
-                dispatchStateLoading(false)
-            }
         }
     }
 

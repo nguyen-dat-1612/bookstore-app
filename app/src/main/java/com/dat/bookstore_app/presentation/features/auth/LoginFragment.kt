@@ -1,6 +1,6 @@
-package com.dat.bookstore_app.presentation.features.login
+package com.dat.bookstore_app.presentation.features.auth
 
-import android.content.Intent
+import android.os.Handler
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextPaint
@@ -19,6 +19,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.findNavController
 import com.dat.bookstore_app.R
 import com.dat.bookstore_app.databinding.FragmentLoginBinding
 import com.dat.bookstore_app.presentation.common.base.BaseFragment
@@ -29,6 +30,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes
 import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -123,20 +125,23 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>() {
 
 
     override fun observeViewModel() {
+
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                loginViewModel.uiState.collectLatest { state ->
-                    if (state.isSuccess) {
-                        mainViewModel.updateLoggedIn(true)
-                        Toast.makeText(context, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
+                launch {
+                    loginViewModel.uiState.collectLatest { state ->
+                        if (state.isSuccess ) {
+                            mainViewModel.updateLoggedIn(true)
+                            Toast.makeText(context, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
+                        }
                     }
-
                 }
-                loginViewModel.errorsState.errors.collectLatest { error ->
-                    error?.let {
-                        Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                launch {
+                    loginViewModel.errorsState.errors.collectLatest { error ->
+                        error?.let {
+                            Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                        }
                     }
-
                 }
             }
         }
