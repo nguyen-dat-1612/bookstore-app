@@ -1,6 +1,7 @@
 package com.dat.bookstore_app.presentation.features.login
 
 import androidx.lifecycle.viewModelScope
+import com.dat.bookstore_app.domain.usecases.LoginGoogleUseCase
 import com.dat.bookstore_app.domain.usecases.LoginUseCase
 import com.dat.bookstore_app.network.Result
 import com.dat.bookstore_app.presentation.common.base.BaseViewModel
@@ -10,7 +11,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val loginGoogleUseCase: LoginGoogleUseCase
 ) : BaseViewModel<LoginUiState> (){
 
     override fun initState() = LoginUiState()
@@ -43,6 +45,27 @@ class LoginViewModel @Inject constructor(
     fun onPasswordChange(password: String) {
         updateState {
             copy(password = password)
+        }
+    }
+
+    fun onLoginGoogle(code: String) {
+        viewModelScope.launch(exceptionHandler) {
+            val result = loginGoogleUseCase(code = code)
+            when(result){
+                is Result.Success -> {
+                    updateState {
+                        copy(isSuccess = true)
+                    }
+                }
+                is Result.Error -> {
+                    dispatchStateError(e = result.throwable!!)
+                    updateState {
+                        copy(isSuccess = false)
+                    }
+                }
+            }
+            dispatchStateLoading(false)
+
         }
     }
 

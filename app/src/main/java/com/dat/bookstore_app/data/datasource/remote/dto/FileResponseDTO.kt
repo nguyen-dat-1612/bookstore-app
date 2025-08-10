@@ -10,6 +10,6 @@ data class FileResponseDTO(
     val url: String,
     @Json(name = "fileName")
     val fileName: String,
-    @Json(name = "uploadAt")
-    val uploadAt: Date
+    @Json(name = "uploadedAt")
+    val uploadedAt: String
 )

@@ -7,16 +7,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.dat.bookstore_app.network.Result
-
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val homeUseCase: HomeUseCase,
 ): BaseViewModel<HomeUiState>() {
     override fun initState() = HomeUiState()
 
-    init {
+    fun loadData() {
         dispatchStateLoading(true)
-        viewModelScope.launch (exceptionHandler){
+        viewModelScope.launch(exceptionHandler) {
             val response = homeUseCase.loadHomeBooks()
             when(response) {
                 is Result.Success -> {
@@ -28,7 +27,11 @@ class HomeViewModel @Inject constructor(
                     dispatchStateError(response.throwable!!)
                 }
             }
+            dispatchStateLoading(false)
         }
-        dispatchStateLoading(false)
+    }
+
+    init {
+        loadData()  // gọi loadData luôn khi tạo ViewModel, đảm bảo load lần đầu
     }
 }

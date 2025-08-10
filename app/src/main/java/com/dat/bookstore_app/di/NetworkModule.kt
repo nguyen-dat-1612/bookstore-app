@@ -7,6 +7,7 @@ import com.dat.bookstore_app.data.datasource.remote.api.BookApi
 import com.dat.bookstore_app.data.datasource.remote.api.CartApi
 import com.dat.bookstore_app.data.datasource.remote.api.CategoryApi
 import com.dat.bookstore_app.data.datasource.remote.api.FavoriteApi
+import com.dat.bookstore_app.data.datasource.remote.api.FileApi
 import com.dat.bookstore_app.data.datasource.remote.api.OrderApi
 import com.dat.bookstore_app.data.datasource.remote.api.PaymentApi
 import com.dat.bookstore_app.data.datasource.remote.api.UserApi
@@ -161,5 +162,11 @@ object NetworkModule {
     fun provideFavoriteApi(retrofit: Retrofit): FavoriteApi {
         return retrofit.create(FavoriteApi::class.java)
 
+    }
+
+    @Provides
+    @Singleton
+    fun provideFileApi(retrofit: Retrofit): FileApi {
+        return retrofit.create(FileApi::class.java)
     }
 }

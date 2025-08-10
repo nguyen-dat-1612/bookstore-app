@@ -88,6 +88,20 @@
                 android:name="orderId"
                 app:argType="long" />
         </action>
+        <action
+            android:id="@+id/action_bottomNavFragment_to_popularFragment"
+            app:destination="@id/popularFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_bottomNavFragment_to_newFragment"
+            app:destination="@id/newFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
@@ -118,11 +132,7 @@
         </action>
         <action
             android:id="@+id/action_detailBookFragment_to_searchInputFragment"
-            app:destination="@id/searchInputFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
+            app:destination="@id/searchInputFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingFragment"
@@ -137,6 +147,13 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right">
         </action>
+        <action
+            android:id="@+id/action_settingFragment_to_createPasswordFragment"
+            app:destination="@id/createPasswordFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/searchInputFragment"
@@ -394,5 +411,58 @@
                 app:argType="long" />
         </action>
     </fragment>
+    <fragment
+        android:id="@+id/newFragment"
+        android:name="com.dat.bookstore_app.presentation.features.popular.NewFragment"
+        android:label="fragment_new"
+        tools:layout="@layout/fragment_new" >
+        <action
+            android:id="@+id/action_newFragment_to_detailBookFragment"
+            app:destination="@id/detailBookFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="book"
+                app:argType="com.dat.bookstore_app.domain.models.Book" />
+        </action>
+        <action
+            android:id="@+id/action_newFragment_to_searchInputFragment"
+            app:destination="@id/searchInputFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/popularFragment"
+        android:name="com.dat.bookstore_app.presentation.features.popular.PopularFragment"
+        android:label="fragment_popular"
+        tools:layout="@layout/fragment_popular" >
+        <action
+            android:id="@+id/action_popularFragment_to_detailBookFragment"
+            app:destination="@id/detailBookFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="book"
+                app:argType="com.dat.bookstore_app.domain.models.Book" />
+        </action>
+        <action
+            android:id="@+id/action_popularFragment_to_searchInputFragment"
+            app:destination="@id/searchInputFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/createPasswordFragment"
+        android:name="com.dat.bookstore_app.presentation.features.settings.CreatePasswordFragment"
+        android:label="fragment_create_password"
+        tools:layout="@layout/fragment_create_password" />
 
 </navigation>

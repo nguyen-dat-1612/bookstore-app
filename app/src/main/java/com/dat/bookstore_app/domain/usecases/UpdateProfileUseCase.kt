@@ -1,11 +1,12 @@
 package com.dat.bookstore_app.domain.usecases
 
+import android.util.Log
 import com.dat.bookstore_app.data.datasource.remote.dto.UserInfoRequestDTO
 import com.dat.bookstore_app.domain.repository.UserRepository
 import javax.inject.Inject
 import com.dat.bookstore_app.network.Result
 
-class UpdateProfile @Inject constructor(
+class UpdateProfileUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) {
     suspend operator fun invoke(
@@ -15,6 +16,10 @@ class UpdateProfile @Inject constructor(
         phone: String,
         avatar: String? = null
     ) : Result<Any?> {
+        Log.d("UpdateProfileUseCase", "invoke: $id, $fullName, $address, $phone, $avatar")
+        if (id <= 0) {
+            return Result.Error(message = "Id is required", throwable = Exception("Id is required"))
+        }
         if (fullName.isEmpty()) {
             return Result.Error(message = "Full name is required", throwable = Exception("Full name is required"))
         }

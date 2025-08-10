@@ -5,13 +5,16 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 object DateHelper {
 
     private const val DATE_FORMAT = "yyyy-MM-dd HH:mm:ss"
 
     private fun getDateFormat(): SimpleDateFormat {
-        return SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
+        return SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).apply {
+            timeZone = TimeZone.getTimeZone("Asia/Ho_Chi_Minh")
+        }
     }
 
     @JvmStatic

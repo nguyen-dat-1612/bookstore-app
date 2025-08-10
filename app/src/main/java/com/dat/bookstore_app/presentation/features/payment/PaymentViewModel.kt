@@ -84,6 +84,12 @@ class PaymentViewModel @Inject constructor(
 
     fun createOrderAndMaybePay() {
         viewModelScope.launch(exceptionHandler) {
+
+            if (!validateOrderInfo()) {
+                dispatchStateLoading(false)
+                return@launch
+            }
+
             dispatchStateLoading(true)
             try {
                 val state = uiState.value
@@ -186,4 +192,28 @@ class PaymentViewModel @Inject constructor(
     fun clearPayment() {
         updateState { copy(payment = null) }
     }
+
+    private fun validateOrderInfo(): Boolean {
+        val state = uiState.value
+
+        // Chặn placeholder hoặc rỗng
+        if (state.fullName.isNullOrBlank() || state.fullName == "Chưa có tên") {
+            dispatchStateError(IllegalArgumentException("Vui lòng nhập họ tên"))
+            return false
+        }
+        if (state.phone.isNullOrBlank() || state.phone == "Chưa có số" || !state.phone.matches(Regex("^\\d{9,11}\$"))) {
+            dispatchStateError(IllegalArgumentException("Số điện thoại không hợp lệ"))
+            return false
+        }
+        if (state.shippingAddress.isNullOrBlank() || state.shippingAddress == "Chưa có địa chỉ") {
+            dispatchStateError(IllegalArgumentException("Vui lòng nhập địa chỉ giao hàng"))
+            return false
+        }
+        if (state.cartList.isEmpty()) {
+            dispatchStateError(IllegalArgumentException("Giỏ hàng trống"))
+            return false
+        }
+        return true
+    }
+
 }

@@ -25,27 +25,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         Log.d(TAG, "Message data payload: $data")
 
         if (data.isNotEmpty()) {
-            val type = data["type"]
             val title = data["title"] ?: "Thông báo"
             val message = data["body"] ?: ""
-            val orderId = data["order_id"]
+            val orderId = data["orderId"]
 
-            when (type) {
-                "order_detail" -> {
-                    if (orderId != null) {
-                        showOrderDetailNotification(title, message, orderId)
-                    } else {
-                        showNotification(title, message)
-                    }
-                }
-                else -> {
-                    showNotification(title, message)
-                }
+            if (orderId != null) {
+                showOrderDetailNotification(title, message, orderId)
             }
-        } else {
-            val title = remoteMessage.notification?.title ?: "Thông báo"
-            val message = remoteMessage.notification?.body ?: ""
-            showNotification(title, message)
         }
     }
 
@@ -138,18 +124,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             }
         }
     }
-
-//    override fun onNewToken(token: String) {
-//        super.onNewToken(token)
-//        Log.d(TAG, "Refreshed token: $token")
-//        // Gửi token mới lên server
-//        sendRegistrationToServer(token)
-//    }
-//
-//    private fun sendRegistrationToServer(token: String) {
-//        // TODO: Implement sending token to your server
-//        Log.d(TAG, "Token sent to server: $token")
-//    }
 
     companion object {
         private const val TAG = "FCMService"

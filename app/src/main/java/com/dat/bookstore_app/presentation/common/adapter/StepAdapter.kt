@@ -72,12 +72,12 @@ class StepAdapter(
                 when {
                     item.status == OrderStatus.ALL && item.createdAt != null -> {
                         visibility = View.VISIBLE
-                        text = "Ngày đặt: ${formatOrderDate(item.createdAt)}"
+                        text = "${formatOrderDate(item.createdAt)}"
                     }
 
                     item.isCurrent && item.updatedAt != null -> {
                         visibility = View.VISIBLE
-                        text = "Cập nhật: ${formatOrderDate(item.updatedAt)}"
+                        text = "${formatOrderDate(item.updatedAt)}"
                     }
 
                     else -> visibility = View.GONE

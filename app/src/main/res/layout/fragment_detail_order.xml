@@ -109,6 +109,7 @@
                                     android:textSize="16sp" />
 
                                 <TextView
+                                    android:id="@+id/tvOrderStatusDescription"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Đơn hàng đang được vận chuyển trong vòng 48h"

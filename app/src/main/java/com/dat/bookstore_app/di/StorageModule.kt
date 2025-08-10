@@ -1,9 +1,9 @@
 package com.dat.bookstore_app.di
 
 import android.content.Context
+import com.dat.bookstore_app.data.datasource.local.datastore.EncryptionManager
 import com.dat.bookstore_app.data.datasource.local.datastore.SearchHistoryManager
-import com.plus.baseandroidapp.data.datasource.datastore.EncryptionManager
-import com.plus.baseandroidapp.data.datasource.datastore.UserManager
+import com.dat.bookstore_app.data.datasource.local.datastore.UserManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

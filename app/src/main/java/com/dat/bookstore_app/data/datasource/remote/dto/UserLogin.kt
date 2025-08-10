@@ -9,11 +9,11 @@ data class UserLogin(
     @Json(name = "email")
     val email: String,
     @Json(name = "phone")
-    val phone: String,
+    val phone: String?,
     @Json(name = "fullName")
     val fullName: String,
     @Json(name = "address")
-    val address: String,
+    val address: String?,
     @Json(name = "role")
     val role: String,
     @Json(name = "id")
@@ -21,5 +21,7 @@ data class UserLogin(
     @Json(name = "avatar")
     val avatar: String?,
     @Json(name = "permissions")
-    val permissions: List<PermissionResponseDTO>
+    val permissions: List<PermissionResponseDTO>,
+    @Json(name = "noPassword")
+    val noPassword: Boolean
 )

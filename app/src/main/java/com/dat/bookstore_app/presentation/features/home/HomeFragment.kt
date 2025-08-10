@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.dat.bookstore_app.R
 import com.dat.bookstore_app.databinding.FragmentHomeBinding
@@ -36,7 +37,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     private val priceTabs = listOf("Giá tăng dần", "Giá giảm dần")
 
     private val navController by lazy {
-        Navigation.findNavController(requireActivity(), R.id.nav_host_main)
+        requireActivity().findNavController(R.id.nav_host_main)
     }
 
     private val popularAdapter by lazy {
@@ -71,6 +72,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         rvPopularBooks.adapter = popularAdapter
         rvPriceBooks.adapter = priceAdapter
 
+        toggleShimmer(true)
+
         // Setup tab popular
         popularTabs.forEach { tabLayoutPopular.addTab(tabLayoutPopular.newTab().setText(it)) }
         tabLayoutPopular.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -102,11 +105,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
-
-        // Shimmer
-        shimmerBanner.shimmerBanner.startShimmer()
-        shimmerPopular.shimmerBooks.startShimmer()
-        shimmerPrice.shimmerBooks.startShimmer()
 
         // Search click
         layoutSearch.setOnClickListener {
@@ -141,11 +139,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         }
 
         scrollView.viewTreeObserver.addOnScrollChangedListener(scrollChangedListener)
-//        binding.vpBanner.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-//            override fun onPageSelected(position: Int) {
-//                currentBannerPosition = position
-//            }
-//        })
+
+        btnSeeMorePopular.setOnClickListener {
+            navController.navigate(R.id.action_bottomNavFragment_to_popularFragment)
+        }
+        btnSeeMorePrice.setOnClickListener {
+            navController.navigate(R.id.action_bottomNavFragment_to_newFragment)
+        }
+
+        swipeRefreshLayout.setOnRefreshListener {
+            viewModel.loadData()
+            swipeRefreshLayout.isRefreshing = false
+        }
     }
 
     private fun dpToPx(dp: Float): Int {
@@ -170,17 +175,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                             isBannerInitialized = true
                         }
 
-                        shimmerBanner.shimmerBanner.stopShimmer()
-                        shimmerBanner.shimmerBanner.visibility = View.GONE
-                        vpBanner.visibility = View.VISIBLE
+                        toggleShimmer(false)
 
-                        shimmerPopular.shimmerBooks.stopShimmer()
-                        shimmerPopular.shimmerBooks.visibility = View.GONE
-                        rvPopularBooks.visibility = View.VISIBLE
-
-                        shimmerPrice.shimmerBooks.stopShimmer()
-                        shimmerPrice.shimmerBooks.visibility = View.GONE
-                        rvPriceBooks.visibility = View.VISIBLE
                     }
                 }
             }
@@ -228,6 +224,38 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         bannerRunnable = null
         isBannerInitialized = false
         super.onDestroyView()
+    }
+
+    private fun toggleShimmer(isLoading: Boolean) = with(binding) {
+        if (isLoading) {
+            // Start shimmer
+            shimmerBanner.shimmerBanner.startShimmer()
+            shimmerPopular.shimmerBooks.startShimmer()
+            shimmerPrice.shimmerBooks.startShimmer()
+
+            shimmerBanner.shimmerBanner.visibility = View.VISIBLE
+            shimmerPopular.shimmerBooks.visibility = View.VISIBLE
+            shimmerPrice.shimmerBooks.visibility = View.VISIBLE
+
+            vpBanner.visibility = View.INVISIBLE
+            rvPopularBooks.visibility = View.INVISIBLE
+            rvPriceBooks.visibility = View.INVISIBLE
+        } else {
+            // Stop shimmer
+            Handler(Looper.getMainLooper()).postDelayed({
+                shimmerBanner.shimmerBanner.stopShimmer()
+                shimmerPopular.shimmerBooks.stopShimmer()
+                shimmerPrice.shimmerBooks.stopShimmer()
+
+                shimmerBanner.shimmerBanner.visibility = View.GONE
+                shimmerPopular.shimmerBooks.visibility = View.GONE
+                shimmerPrice.shimmerBooks.visibility = View.GONE
+
+                vpBanner.visibility = View.VISIBLE
+                rvPopularBooks.visibility = View.VISIBLE
+                rvPriceBooks.visibility = View.VISIBLE
+            }, 200)
+        }
     }
 
     companion object {

@@ -11,5 +11,6 @@ data class User(
     val role: String?,
     val id: Long?,
     val avatar: String?,
-    val permissions: List<Permission>?
+    val permissions: List<Permission>?,
+    val noPassword: Boolean?
 )

@@ -7,6 +7,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import com.dat.bookstore_app.databinding.FragmentCartBinding
 import com.dat.bookstore_app.domain.models.Cart
@@ -18,6 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import com.dat.bookstore_app.R
+import com.dat.bookstore_app.presentation.features.main.MainSharedViewModel
 import com.dat.bookstore_app.presentation.features.main.MainViewModel
 import com.dat.bookstore_app.utils.extension.hide
 import com.dat.bookstore_app.utils.extension.show
@@ -27,6 +29,8 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
 
     private val cartViewModel: CartViewModel by viewModels()
     private val mainViewModel: MainViewModel by activityViewModels()
+    private val sharedViewModel: MainSharedViewModel by activityViewModels()
+
     private var hasLoadedCart = false
     private var isAllSelected = false
 
@@ -62,6 +66,14 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
 
     override fun setUpView() = with(binding){
         rvCart.adapter = adapter
+
+        // Kiểm tra login ngay lúc setup view
+        if (!mainViewModel.uiState.value.isLoggedIn) {
+            showRequireLoginLayout()
+        } else {
+            cartViewModel.loadCart()
+            hasLoadedCart = true
+        }
         btnPayment.setOnClickListener {
             val selectedCarts = cartViewModel.uiState.value.ListCart.filter { it.isSelected }
             if (selectedCarts.isEmpty()) {
@@ -84,6 +96,16 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
 
             imgCheckbox.setImageResource(iconRes)
             cartViewModel.updateAllChecked(isAllSelected)
+        }
+
+        btnBuyNow.setOnClickListener {
+            requireActivity().findNavController(R.id.nav_host_bottom)
+                .navigate(R.id.homeFragment)
+
+        }
+        btnLogin.setOnClickListener {
+            requireActivity().findNavController(R.id.nav_host_bottom)
+                .navigate(R.id.accountFragment)
         }
     }
 
@@ -151,4 +173,17 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
         tvPricePayment.text = CurrencyUtils.formatVND(priceTotal)
     }
 
+    fun navigateTabBottomNav(tab: String) {
+
+        val options = NavOptions.Builder()
+            .setEnterAnim(R.anim.slide_in_right)
+            .setExitAnim(R.anim.slide_out_left)
+            .setPopEnterAnim(R.anim.slide_in_left)
+            .setPopExitAnim(R.anim.slide_out_right)
+            .setPopUpTo(R.id.detailBookFragment, true)
+            .setLaunchSingleTop(true)
+            .build()
+        sharedViewModel.switchTab(tab)
+        navController.navigate(R.id.bottomNavFragment, null, options)
+    }
 }

@@ -58,31 +58,35 @@
 
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="32dp"
         android:orientation="vertical"
         android:layout_marginStart="8dp"
         app:layout_constraintStart_toEndOf="@id/ivStepIcon"
         app:layout_constraintTop_toTopOf="@id/ivStepIcon">
 
         <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
             android:id="@+id/tvStepTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
             android:text="Đơn hàng mới"
+            android:layout_weight="1"
             android:textStyle="bold"
-            android:textSize="10sp"/>
+            android:textSize="12sp"
+            android:gravity="center_vertical" />
 
         <TextView
             android:id="@+id/tvUpdatedAt"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:text="Thời gian"
-            android:layout_marginTop="4dp"
-            android:textSize="8sp"
+            android:layout_weight="1"
+            android:visibility="visible"
+            android:layout_marginTop="2dp"
+            android:textSize="10sp"
             android:textColor="@color/black"/>
-
     </LinearLayout>
 
     <ImageView

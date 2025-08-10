@@ -5,6 +5,7 @@ import com.dat.bookstore_app.data.datasource.remote.dto.BookResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.CartResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.CategoryResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.FavoriteResponseDTO
+import com.dat.bookstore_app.data.datasource.remote.dto.FileResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.OrderItemRequestDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.OrderItemResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.OrderResponseDTO
@@ -20,6 +21,7 @@ import com.dat.bookstore_app.domain.models.Cart
 import com.dat.bookstore_app.domain.models.Category
 import com.dat.bookstore_app.domain.models.CategoryUiModel
 import com.dat.bookstore_app.domain.models.Favorite
+import com.dat.bookstore_app.domain.models.File
 import com.dat.bookstore_app.domain.models.Order
 import com.dat.bookstore_app.domain.models.OrderItem
 import com.dat.bookstore_app.domain.models.PagedBook
@@ -93,7 +95,8 @@ fun UserLogin.toDomain(): User {
         role = role,
         id = id,
         avatar = avatar,
-        permissions = permissions.map { it.toDomain() }
+        permissions = permissions.map { it.toDomain() },
+        noPassword = noPassword
     )
 }
 
@@ -205,6 +208,14 @@ fun FavoriteResponseDTO.toDomain() : Favorite {
         id = id,
         userId = userId,
         book = book.toDomain()
+    )
+}
+
+fun FileResponseDTO.toDomain() : File {
+    return File(
+        url = url,
+        fileName = fileName,
+        uploadedAt = uploadedAt
     )
 }
 

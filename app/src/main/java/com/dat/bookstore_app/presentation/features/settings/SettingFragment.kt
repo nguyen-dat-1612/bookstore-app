@@ -12,9 +12,12 @@ import com.dat.bookstore_app.R
 import com.dat.bookstore_app.databinding.FragmentSettingBinding
 import com.dat.bookstore_app.presentation.common.base.BaseFragment
 import com.dat.bookstore_app.presentation.features.main.MainViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 
 @AndroidEntryPoint
 class SettingFragment : BaseFragment<FragmentSettingBinding>() {
@@ -26,6 +29,9 @@ class SettingFragment : BaseFragment<FragmentSettingBinding>() {
     private val navController by lazy {
         Navigation.findNavController(requireActivity(), R.id.nav_host_main)
     }
+
+    private lateinit var googleSignInClient: GoogleSignInClient
+
     override fun getViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -34,24 +40,39 @@ class SettingFragment : BaseFragment<FragmentSettingBinding>() {
     }
 
     override fun setUpView() = with(binding){
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .requestServerAuthCode(getString(R.string.server_client_id), false)
+            .build()
+
+        googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
+
+
         btnBack.setOnClickListener {
             navController.popBackStack()
         }
 
         btnLogout.setOnClickListener {
-            settingViewModel.logout()
-        }
-        btnChangePassword.setOnClickListener {
-            navController.navigate(R.id.action_settingFragment_to_changePasswordFragment)
-        }
-
-        switchNotification.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                settingViewModel.fetchAndEnableNotification()
-            } else {
-                settingViewModel.disableNotification()
+            googleSignInClient.signOut().addOnCompleteListener {
+                settingViewModel.logout()
             }
         }
+        btnChangePassword.setOnClickListener {
+            if (settingViewModel.uiState.value.user?.noPassword!!) {
+                navController.navigate(R.id.action_settingFragment_to_createPasswordFragment)
+            } else {
+                navController.navigate(R.id.action_settingFragment_to_changePasswordFragment)
+            }
+        }
+
+//        switchNotification.setOnCheckedChangeListener { _, isChecked ->
+//            if (isChecked) {
+//                settingViewModel.fetchAndEnableNotification()
+//            } else {
+//                settingViewModel.disableNotification()
+//            }
+//        }
     }
 
     override fun observeViewModel() {

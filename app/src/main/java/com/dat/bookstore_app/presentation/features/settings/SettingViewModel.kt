@@ -3,6 +3,7 @@ package com.dat.bookstore_app.presentation.features.settings
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.dat.bookstore_app.domain.usecases.GetAccountUseCase
 import com.dat.bookstore_app.domain.usecases.LogoutUseCase
 import com.dat.bookstore_app.domain.usecases.RemoveTokenUseCase
 import com.dat.bookstore_app.domain.usecases.UpdateTokenUseCase
@@ -17,6 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
+    private val getAccountUseCase: GetAccountUseCase,
     private val updateTokenUseCase: UpdateTokenUseCase,
     private val removeTokenUseCase: RemoveTokenUseCase,
     private val savedStateHandle: SavedStateHandle
@@ -26,9 +28,26 @@ class SettingViewModel @Inject constructor(
 
     val userId = savedStateHandle.get<Long>("userId")!!
 
+    init {
+        viewModelScope.launch(exceptionHandler) {
+            val result = getAccountUseCase()
+            when (result) {
+                is Result.Success -> {
+                    updateState {
+                        copy(user = result.data)
+                    }
+                }
+                is Result.Error -> {
+                    dispatchStateError(result.throwable!!)
+                }
+            }
+        }
+    }
+
     fun logout() {
         viewModelScope.launch(exceptionHandler) {
             dispatchStateLoading(true)
+            disableNotification()
             val result = logoutUseCase()
             when (result) {
                 is Result.Success -> {
@@ -45,39 +64,6 @@ class SettingViewModel @Inject constructor(
                 }
             }
             dispatchStateLoading(false)
-        }
-    }
-
-    fun fetchAndEnableNotification() {
-        viewModelScope.launch(exceptionHandler) {
-            dispatchStateLoading(true)
-            try {
-                val token = FirebaseMessaging.getInstance().token.await()
-                Log.d("SettingViewModel", "Token: $token")
-                val result = updateTokenUseCase(userId, token)
-
-                when (result) {
-                    is Result.Success -> {
-                        updateState {
-                            copy(isNotificationEnabled = true, currentToken = token)
-                        }
-                    }
-
-                    is Result.Error -> {
-                        updateState {
-                            copy(isNotificationEnabled = false)
-                        }
-                        dispatchStateError(result.throwable!!)
-                    }
-                }
-            } catch (e: Exception) {
-                updateState {
-                    copy(isNotificationEnabled = false)
-                }
-                dispatchStateError(e)
-            } finally {
-                dispatchStateLoading(false)
-            }
         }
     }
 
@@ -105,28 +91,5 @@ class SettingViewModel @Inject constructor(
         }
     }
 
-    fun updateToken(token: String) {
-        viewModelScope.launch(exceptionHandler) {
-            dispatchStateLoading(true)
-            try {
-                val result = updateTokenUseCase(userId, token)
-                when (result) {
-                    is Result.Success -> {
-                        updateState {
-                            copy(isChangeSuccess = true)
-                        }
-                    }
 
-                    is Result.Error -> {
-                        updateState {
-                            copy(isChangeSuccess = false)
-                        }
-                        dispatchStateError(result.throwable!!)
-                    }
-                }
-            } finally {
-                dispatchStateLoading(false)
-            }
-        }
-    }
 }

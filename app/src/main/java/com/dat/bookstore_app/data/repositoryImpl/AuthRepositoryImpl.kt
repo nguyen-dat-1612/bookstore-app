@@ -1,6 +1,7 @@
 package com.dat.bookstore_app.data.repositoryImpl
 
 import com.dat.bookstore_app.data.datasource.local.datastore.TokenProvider
+import com.dat.bookstore_app.data.datasource.local.datastore.UserManager
 import com.dat.bookstore_app.data.datasource.remote.api.AuthApiNoAuth
 import com.dat.bookstore_app.data.datasource.remote.api.AuthApiWithAuth
 import com.dat.bookstore_app.data.datasource.remote.dto.ChangePasswordRequestDTO
@@ -15,7 +16,6 @@ import com.dat.bookstore_app.domain.repository.AuthRepository
 import com.dat.bookstore_app.network.Result
 import com.dat.bookstore_app.utils.extension.apiCallResponse
 import com.dat.bookstore_app.utils.extension.map
-import com.plus.baseandroidapp.data.datasource.datastore.UserManager
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -80,5 +80,13 @@ class AuthRepositoryImpl @Inject constructor(
             onSuccess = { Result.Success(it) },
             onFailure = { Result.Error(message = it.message ?: "Unknown error", throwable = it) }
         )
+    }
+
+    override suspend fun outboundAuthentication(code: String): Result<LoginResponseDTO> {
+        return apiCallResponse {
+            val response = authApiNoAuth.outboundAuthentication(code)
+            tokenProvider.updateToken(response.data!!.accessToken);
+            response
+        }
     }
 }

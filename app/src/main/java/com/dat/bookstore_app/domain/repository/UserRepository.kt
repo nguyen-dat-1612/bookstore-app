@@ -1,5 +1,6 @@
 package com.dat.bookstore_app.domain.repository
 
+import com.dat.bookstore_app.data.datasource.remote.dto.CreatePasswordRequestDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.DeviceTokenRequestDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.UserInfoRequestDTO
 import com.dat.bookstore_app.network.Result
@@ -10,4 +11,5 @@ interface UserRepository {
     suspend fun updateProfile(request: UserInfoRequestDTO) : Result<Any?>
     suspend fun updateDeviceToken(request : DeviceTokenRequestDTO) : Result<Any?>
     suspend fun removeDeviceToken(request : DeviceTokenRequestDTO) : Result<Any?>
+    suspend fun createPassword(request : CreatePasswordRequestDTO) : Result<Any?>
 }

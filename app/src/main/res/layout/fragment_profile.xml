@@ -195,8 +195,8 @@
                             android:layout_width="48dp"
                             android:layout_height="48dp"
                             android:background="@drawable/bg_circle_gray"
-                            android:padding="12dp"
-                            android:src="@drawable/ic_payment"
+                            android:padding="8dp"
+                            android:src="@drawable/ic_credit_card_clock"
                             app:tint="@color/black" />
 
                         <TextView
@@ -221,8 +221,8 @@
                             android:layout_width="48dp"
                             android:layout_height="48dp"
                             android:background="@drawable/bg_circle_gray"
-                            android:padding="12dp"
-                            android:src="@drawable/ic_box"
+                            android:padding="8dp"
+                            android:src="@drawable/ic_box_delay"
                             app:tint="@color/black" />
 
                         <TextView
@@ -247,8 +247,8 @@
                             android:layout_width="48dp"
                             android:layout_height="48dp"
                             android:background="@drawable/bg_circle_gray"
-                            android:padding="12dp"
-                            android:src="@drawable/ic_ship"
+                            android:padding="8dp"
+                            android:src="@drawable/ic_delivery_truck_speed"
                             app:tint="@color/black" />
 
                         <TextView
@@ -273,8 +273,8 @@
                             android:layout_width="48dp"
                             android:layout_height="48dp"
                             android:background="@drawable/bg_circle_gray"
-                            android:padding="12dp"
-                            android:src="@drawable/ic_complete"
+                            android:padding="8dp"
+                            android:src="@drawable/ic_check_circle"
                             app:tint="@color/black" />
 
                         <TextView

@@ -14,37 +14,23 @@ class ChangeAddressViewModel @Inject constructor(
 
     override fun initState() = ChangeAddressUiState()
 
-    fun loadAddressFromArgsIfAvailable() {
-        val fullNameLive = savedStateHandle.getLiveData<String>("fullName")
-        val phoneLive = savedStateHandle.getLiveData<String>("phone")
-        val addressLive = savedStateHandle.getLiveData<String>("address")
-
-        // Combine cả 3 lại
-        viewModelScope.launch {
-            val fullName = fullNameLive.value
-            val phone = phoneLive.value
-            val address = addressLive.value
-            if (fullName != null && phone != null && address != null) {
-                updateState {
-                    copy(
-                        fullName = fullName,
-                        phone = phone,
-                        address = address
-                    )
-                }
-            }
-        }
+    init {
+        loadAddressFromArgsIfAvailable()
     }
 
-    fun updateAddress(fullName: String, phone: String, address: String) {
-        viewModelScope.launch {
-            updateState {
-                copy(
-                    fullName = fullName,
-                    phone = phone,
-                    address = address
-                )
-            }
+    private fun loadAddressFromArgsIfAvailable() {
+        fun String?.orNullIfPlaceholder(placeholders: List<String>) =
+            if (this == null || this in placeholders) null else this
+
+        updateState {
+            copy(
+                fullName = savedStateHandle.get<String>("fullName")
+                    .orNullIfPlaceholder(listOf("Chưa có tên")),
+                phone = savedStateHandle.get<String>("phone")
+                    .orNullIfPlaceholder(listOf("Chưa có số")),
+                address = savedStateHandle.get<String>("address")
+                    .orNullIfPlaceholder(listOf("Chưa có địa chỉ"))
+            )
         }
     }
 }

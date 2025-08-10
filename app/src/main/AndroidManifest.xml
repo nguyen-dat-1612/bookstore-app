@@ -60,6 +60,11 @@
                 <data android:scheme="bookstore" android:host="order" android:pathPrefix="/detail"/>
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="fullSensor"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <service
             android:name=".services.MyFirebaseMessagingService"
             android:exported="false">
@@ -87,6 +92,15 @@
             android:name="firebase_messaging_auto_init_enabled"
             android:value="false" />
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

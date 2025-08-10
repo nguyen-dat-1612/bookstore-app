@@ -9,6 +9,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface AuthApiNoAuth {
     @Headers("No-Authentication: true")
@@ -22,4 +23,9 @@ interface AuthApiNoAuth {
     @Headers("No-Authentication: true")
     @GET("auth/refresh")
     suspend fun getRefreshToken(): ApiResponse<LoginResponseDTO>
+
+    @Headers("No-Authentication: true")
+    @POST("auth/outbound/authentication")
+    suspend fun outboundAuthentication(@Query("code") code: String): ApiResponse<LoginResponseDTO>
+
 }

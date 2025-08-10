@@ -15,6 +15,7 @@ import androidx.appcompat.widget.SearchView
 import android.graphics.Color
 import android.os.Build
 import android.text.style.RelativeSizeSpan
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import androidx.annotation.ColorRes
@@ -70,16 +71,20 @@ suspend fun <T> apiCallResponse(apiCall: suspend () -> ApiResponse<T>) : Result<
     } catch (e: HttpException) {
         val code = e.code()
         val errorBody = e.response()?.errorBody()?.string()
+        Log.e("apiCallResponse", "HTTP $code: $errorBody")
         Result.Error(
             code = code,
             message = "HTTP $code: $errorBody",
             throwable = e
         )
     } catch (e: IOException ) {
+        Log.e("apiCallResponse", "IO: $e")
         Result.Error(message = e.message ?: "Unknown error", throwable = e)
     } catch (e: CancellationException) {
+        Log.e("apiCallResponse", "Cancellation: $e")
         throw e
     } catch (e: Exception) {
+        Log.e("apiCallResponse", "Unknown: $e")
         Result.Error(message = e.message ?: "Unknown error", throwable = e)
     }
 }

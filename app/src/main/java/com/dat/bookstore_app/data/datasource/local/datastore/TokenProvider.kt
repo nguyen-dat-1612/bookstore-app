@@ -4,7 +4,6 @@ import android.util.Log
 import com.dat.bookstore_app.data.datasource.remote.api.AuthApiNoAuth
 import com.dat.bookstore_app.network.Result
 import com.dat.bookstore_app.utils.extension.apiCallResponse
-import com.plus.baseandroidapp.data.datasource.datastore.UserManager
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton

@@ -61,7 +61,7 @@ class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
         }
 
         btnOrder.setOnClickListener {
-            requireActivity().findViewById<View>(R.id.progressOverlay).visibility = View.VISIBLE
+//            requireActivity().findViewById<View>(R.id.progressOverlay).visibility = View.VISIBLE
             viewModel.createOrderAndMaybePay()
         }
 
@@ -134,6 +134,7 @@ class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
 
                         if (shouldNavigate && orderId != null) {
                             Handler(Looper.getMainLooper()).postDelayed({
+                                requireActivity().findViewById<View>(R.id.progressOverlay).visibility = View.GONE
                                 navController.navigate(
                                     PaymentFragmentDirections.actionPaymentFragmentToOrderSuccessFragment(orderId)
                                 )
@@ -145,6 +146,11 @@ class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
                             PaymentMethod.COD -> binding.momoRadioButton.isChecked = true
                             PaymentMethod.VNPAY -> binding.vnpayRadioButton.isChecked = true
                         }
+                    }
+                }
+                launch {
+                    viewModel.errorsState.errors.collect { throwable ->
+                        Toast.makeText(requireContext(), throwable.message ?: "Lỗi không xác định", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

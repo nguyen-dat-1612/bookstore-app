@@ -1,14 +1,17 @@
 package com.dat.bookstore_app.presentation.features.login
 
+import android.content.Intent
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
@@ -20,6 +23,11 @@ import com.dat.bookstore_app.R
 import com.dat.bookstore_app.databinding.FragmentLoginBinding
 import com.dat.bookstore_app.presentation.common.base.BaseFragment
 import com.dat.bookstore_app.presentation.features.main.MainViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes
+import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -30,6 +38,21 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>() {
     private val loginViewModel by viewModels<LoginViewModel>()
     private val mainViewModel by activityViewModels<MainViewModel>()
 
+    private lateinit var googleSignInClient: GoogleSignInClient
+
+    private val googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val authCode = account?.serverAuthCode
+            if (authCode != null) {
+                loginViewModel.onLoginGoogle(authCode)
+            }
+        } catch (e: ApiException) {
+            Log.e("GoogleSignIn", "Sign-in failed: ${e.statusCode} - ${GoogleSignInStatusCodes.getStatusCodeString(e.statusCode)}", e)
+        }
+    }
+
     override fun getViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -38,6 +61,12 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>() {
     }
 
     override fun setUpView() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .requestServerAuthCode(getString(R.string.server_client_id), false)
+            .build()
+        googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
+
         setUpUI()
         onListener()
     }
@@ -80,9 +109,15 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>() {
         }
     }
 
+
     private fun onListener() = with(binding) {
         btnLogin.setOnClickListener {
             loginViewModel.onLogin()
+        }
+
+
+        btnLoginGoogle.setOnClickListener {
+            googleSignInLauncher.launch(googleSignInClient.signInIntent)
         }
     }
 

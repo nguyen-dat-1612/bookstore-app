@@ -1,27 +1,51 @@
 package com.dat.bookstore_app.presentation.features.profile
 
+import android.app.Activity
 import android.content.Context
+import android.graphics.Bitmap
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
+import coil3.load
+import coil3.request.crossfade
+import coil3.request.placeholder
+import com.dat.bookstore_app.R
 import com.dat.bookstore_app.databinding.FragmentPersonalProfileBinding
 import com.dat.bookstore_app.presentation.common.base.BaseFragment
+import com.dat.bookstore_app.utils.extension.loadUrl
+import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import com.dat.bookstore_app.R
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 
 @AndroidEntryPoint
 class PersonalProfileFragment : BaseFragment<FragmentPersonalProfileBinding>() {
 
-    private val viewModel: PersonalProfileViewModel by viewModels<PersonalProfileViewModel>()
+    private val viewModel: PersonalProfileViewModel by viewModels()
+
+    // Lấy ảnh từ thư viện
+    private lateinit var pickImageLauncher: ActivityResultLauncher<String>
+    private lateinit var cropLauncher: ActivityResultLauncher<android.content.Intent>
+
+    // Chụp ảnh
+    private lateinit var takePhotoLauncher: ActivityResultLauncher<Uri>
+    private var tempImageUri: Uri? = null
 
     private val navController by lazy {
         requireActivity().findNavController(R.id.nav_host_main)
@@ -47,6 +71,61 @@ class PersonalProfileFragment : BaseFragment<FragmentPersonalProfileBinding>() {
             validateAndSubmit()
         }
 
+        // Đăng ký mở thư viện ảnh
+        pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let { startCrop(it) }
+        }
+
+        // Đăng ký chụp ảnh
+        takePhotoLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success) {
+                tempImageUri?.let { startCrop(it) }
+            }
+        }
+
+        // Đăng ký nhận kết quả crop
+        cropLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.let { intent ->
+                    val resultUri = UCrop.getOutput(intent)
+                    resultUri?.let {
+                        binding.ivAvatar.load(it) {
+                            crossfade(true)
+                            placeholder(R.drawable.ic_placeholder_avatar) // nếu bạn có icon mặc định
+                            error(R.drawable.ic_placeholder_avatar)
+                        }
+                        handleImagePicked(it)
+                    }
+                }
+            } else if (result.resultCode == UCrop.RESULT_ERROR) {
+                val cropError = UCrop.getError(result.data!!)
+                cropError?.printStackTrace()
+            }
+        }
+
+        // Click avatar -> chọn ảnh
+        editProfileImage.setOnClickListener {
+            val options = arrayOf("Chụp ảnh", "Chọn từ thư viện")
+            androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Chọn ảnh đại diện")
+                .setItems(options) { _, which ->
+                    when (which) {
+                        0 -> { // Chụp ảnh
+                            val photoFile = File.createTempFile("temp_photo_", ".jpg", requireContext().cacheDir)
+                            tempImageUri = androidx.core.content.FileProvider.getUriForFile(
+                                requireContext(),
+                                "${requireContext().packageName}.provider",
+                                photoFile
+                            )
+                            takePhotoLauncher.launch(tempImageUri!!)
+                        }
+                        1 -> { // Thư viện
+                            pickImageLauncher.launch("image/*")
+                        }
+                    }
+                }
+                .show()
+        }
     }
 
     override fun observeViewModel() {
@@ -57,6 +136,21 @@ class PersonalProfileFragment : BaseFragment<FragmentPersonalProfileBinding>() {
                         binding.etFullName.setText(it.user.fullName)
                         binding.etAddress.setText(it.user.address)
                         binding.etPhone.setText(it.user.phone)
+                        if (it.user.avatar != null)  {
+                            binding.ivAvatar.loadUrl(it.user.avatar)
+                        } else binding.ivAvatar.load(R.drawable.ic_placeholder_avatar)
+                    }
+                }
+                launch {
+                    viewModel.loadingState.loading.collect { isLoading ->
+                        if (isLoading) {
+                            binding.progressOverlay.root.visibility = View.VISIBLE
+                        }
+//                        else {
+//                            delay(2000) // giữ loading 2 giây trước khi ẩn
+//                            binding.progressOverlay.root.visibility = View.GONE
+//                            // cập nhật dữ liệu ở đây nếu cần
+//                        }
                     }
                 }
             }
@@ -105,7 +199,6 @@ class PersonalProfileFragment : BaseFragment<FragmentPersonalProfileBinding>() {
 
         var isValid = true
 
-        // Validate họ và tên
         if (fullName.isBlank()) {
             binding.fullNameError.text = "Họ và tên không được để trống"
             binding.fullNameError.visibility = View.VISIBLE
@@ -115,7 +208,6 @@ class PersonalProfileFragment : BaseFragment<FragmentPersonalProfileBinding>() {
             binding.fullNameError.visibility = View.INVISIBLE
         }
 
-        // Validate địa chỉ
         if (address.isBlank()) {
             binding.addressError.text = "Địa chỉ không được để trống"
             binding.addressError.visibility = View.VISIBLE
@@ -125,7 +217,6 @@ class PersonalProfileFragment : BaseFragment<FragmentPersonalProfileBinding>() {
             binding.addressError.visibility = View.INVISIBLE
         }
 
-        // Validate số điện thoại Việt Nam
         if (!isValidVietnamPhoneNumber(phone)) {
             binding.phoneError.text = "Số điện thoại không hợp lệ"
             binding.phoneError.visibility = View.VISIBLE
@@ -135,7 +226,6 @@ class PersonalProfileFragment : BaseFragment<FragmentPersonalProfileBinding>() {
             binding.phoneError.visibility = View.INVISIBLE
         }
 
-        // Nếu hợp lệ, gọi ViewModel cập nhật
         if (isValid) {
             viewModel.updateAccount(fullName, address, phone)
         }
@@ -147,13 +237,59 @@ class PersonalProfileFragment : BaseFragment<FragmentPersonalProfileBinding>() {
     }
 
     private fun clearFocusAndHideKeyboard() {
-        // Clear focus tất cả các EditText
         binding.etFullName.clearFocus()
         binding.etAddress.clearFocus()
         binding.etPhone.clearFocus()
 
-        // Ẩn bàn phím
+
         val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(requireView().windowToken, 0)
+    }
+
+    private fun startCrop(sourceUri: Uri?) {
+        sourceUri ?: return // nếu null thì bỏ qua
+
+        val destinationUri = Uri.fromFile(
+            File(requireContext().cacheDir, "cropped_image_${System.currentTimeMillis()}.jpg")
+        )
+
+        val options = UCrop.Options().apply {
+            setCompressionFormat(Bitmap.CompressFormat.JPEG)
+            setCompressionQuality(90)
+            setFreeStyleCropEnabled(true)
+        }
+
+        val screenWidth = resources.displayMetrics.widthPixels.toFloat()
+
+        val intent = UCrop.of(sourceUri, destinationUri)
+            .withAspectRatio(screenWidth, screenWidth)
+            .withMaxResultSize(screenWidth.toInt(), screenWidth.toInt())
+            .withOptions(options)
+            .getIntent(requireContext())
+
+        cropLauncher.launch(intent)
+    }
+
+    private fun handleImagePicked(uri: Uri) {
+        val inputStream = requireContext().contentResolver.openInputStream(uri)
+        val bytes = inputStream?.readBytes() ?: return
+
+        // Lấy tên file
+        val fileName = "avatar_${System.currentTimeMillis()}.jpg"
+
+        // Tạo RequestBody cho file (chỉ nhận image/*)
+        val requestFile = bytes.toRequestBody("image/jpeg".toMediaTypeOrNull())
+
+        // MultipartBody.Part cho "file"
+        val filePart = MultipartBody.Part.createFormData(
+            "file",
+            fileName,
+            requestFile
+        )
+
+        // RequestBody cho "folder"
+        val folderPart = "avatar".toRequestBody("text/plain".toMediaTypeOrNull())
+
+        viewModel.uploadFile(filePart, folderPart)
     }
 }

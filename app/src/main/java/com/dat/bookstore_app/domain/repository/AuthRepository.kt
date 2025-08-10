@@ -17,4 +17,5 @@ interface AuthRepository {
     suspend fun getRefreshToken(): Result<LoginResponseDTO>
     suspend fun changePassword(changePasswordRequestDTO: ChangePasswordRequestDTO): Result<Any?>
     suspend fun getUser(): Result<UserLogin>
+    suspend fun outboundAuthentication(code: String): Result<LoginResponseDTO>
 }

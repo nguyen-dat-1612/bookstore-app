@@ -1,5 +1,6 @@
 package com.dat.bookstore_app.data.datasource.remote.api
 
+import com.dat.bookstore_app.data.datasource.remote.dto.CreatePasswordRequestDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.DeviceTokenRequestDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.UserInfoRequestDTO
 import com.dat.bookstore_app.network.ApiResponse
@@ -16,4 +17,8 @@ interface UserApi {
 
     @POST("users/remove-device-token")
     suspend fun removeDeviceToken(@Body request: DeviceTokenRequestDTO): ApiResponse<Any?>
+
+    @POST("users/create-password")
+    suspend fun createPassword(@Body request: CreatePasswordRequestDTO): ApiResponse<Any?>
+
 }

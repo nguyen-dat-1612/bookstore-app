@@ -1,6 +1,9 @@
 package com.dat.bookstore_app.presentation.features.book
 
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -118,27 +121,51 @@ class DetailBookFragment : BaseFragment<FragmentDetailBookBinding>() {
     override fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collectLatest {
-                    if (it.book != null) {
-                        setUpBook(book = it.book)
+                launch {
+                    viewModel.loadingState.loading.collectLatest {
+                        with(binding) {
+                            if (it) {
+                                shimmerDetailBook.root.startShimmer()
+                                shimmerDetailBook.root.visibility = View.VISIBLE
+                                scrollView.visibility = View.GONE
+                                bottomBar.visibility = View.GONE
+                            }
+                            if (!it && viewModel.uiState.value.book != null) {
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    shimmerDetailBook.root.stopShimmer()
+                                    shimmerDetailBook.root.visibility = View.GONE
+                                    scrollView.visibility = View.VISIBLE
+                                    bottomBar.visibility = View.VISIBLE
+                                }, 500)
+                            }
+                        }
                     }
-                    if (it.count != null) {
-                        binding.tvCount.text = it.count.toString()
-                    }
-                    if (it.addCartSuccess) {
-                        showToast("Thêm vào giỏ hàng thành công")
-                    }
-                    if (it.addFavoriteSuccess) {
-                        binding.btnFavorite.setImageResource(R.drawable.ic_favorite_fill)
-                        showToast("Thêm vào danh sách yêu thích thành công")
-                    }
-                    if (it.isFavorite) {
-                        binding.btnFavorite.setImageResource(R.drawable.ic_favorite_fill)
-                    } else {
-                        binding.btnFavorite.setImageResource(R.drawable.ic_favorite)
-                    }
-
                 }
+                launch {
+                    viewModel.uiState.collectLatest {
+                        if (it.book != null) {
+                            setUpBook(book = it.book)
+
+                        }
+                        if (it.count != null) {
+                            binding.tvCount.text = it.count.toString()
+                        }
+                        if (it.addCartSuccess) {
+                            showToast("Thêm vào giỏ hàng thành công")
+                        }
+                        if (it.addFavoriteSuccess) {
+                            binding.btnFavorite.setImageResource(R.drawable.ic_favorite_fill)
+                            showToast("Thêm vào danh sách yêu thích thành công")
+                        }
+                        if (it.isFavorite) {
+                            binding.btnFavorite.setImageResource(R.drawable.ic_favorite_fill)
+                        } else {
+                            binding.btnFavorite.setImageResource(R.drawable.ic_favorite)
+                        }
+
+                    }
+                }
+
             }
         }
 

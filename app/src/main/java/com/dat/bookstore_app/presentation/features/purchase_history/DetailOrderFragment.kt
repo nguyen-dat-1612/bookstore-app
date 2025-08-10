@@ -101,6 +101,7 @@ class DetailOrderFragment : BaseFragment<FragmentDetailOrderBinding>() {
                         renderSteps(order)
                         renderButtons(order)
                         renderPaymentIfAny(state)
+                        renderText(state)
                     }
                     if (state.canCancelOrder) {
                         navController.popBackStack()
@@ -115,9 +116,15 @@ class DetailOrderFragment : BaseFragment<FragmentDetailOrderBinding>() {
         tvOrderDate.text = DateHelper.formatOrderDate(order.createdAt)
         tvOrderQuantity.text = "${order.orderItems.size} sản phẩm"
         tvOrderTotal.text = CurrencyUtils.formatVND(order.totalAmount)
+        tvOrderPaymentMethod.text = if (order.paymentMethod == PaymentMethod.COD) {
+            "Thanh toán khi nhận hàng (COD)"
+        } else {
+            "Thanh toán online (Ví ZaloPay)"
+        }
 
         binding.tvStatus.text = order.status.title
         binding.tvPriceOrder.text = CurrencyUtils.formatVND(order.totalAmount)
+
     }
 
     private fun renderReceiverInfo(order: Order) = with(binding.includeReceiverInfo) {
@@ -167,6 +174,11 @@ class DetailOrderFragment : BaseFragment<FragmentDetailOrderBinding>() {
             // viewModel.clearPayment() // nếu bạn cần ngăn trigger lại
             openUrlInChrome(requireContext(), payment.paymentUrl)
         }
+    }
+
+    private fun renderText(state: DetailOrderUiState) = with(binding) {
+        tvOrderStatus.text = OrderStatus.getOrderStatusTitle(state.order!!.status)
+        tvOrderStatusDescription.text = OrderStatus.getOrderStatusDescription(state.order!!.status)
     }
 
     private fun openUrlInChrome(context: Context, url: String) {

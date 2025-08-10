@@ -41,12 +41,23 @@ class ChangeAddressFragment : BaseFragment<FragmentChangeAddressBinding>() {
             val phone = etPhone.text.toString().trim()
             val address = etAddress.text.toString().trim()
 
-            navController.previousBackStackEntry
-                ?.savedStateHandle
-                ?.set("new_address", Triple(fullName, phone, address))
-
-            navController.popBackStack()
-
+            when {
+                fullName.isEmpty() || fullName == "Chưa có tên" -> {
+                    etFullName.error = "Vui lòng nhập họ tên hợp lệ"
+                }
+                phone.isEmpty() || phone == "Chưa có số" || !phone.matches(Regex("^\\d{9,11}\$")) -> {
+                    etPhone.error = "Số điện thoại không hợp lệ"
+                }
+                address.isEmpty() || address == "Chưa có địa chỉ" -> {
+                    etAddress.error = "Vui lòng nhập địa chỉ hợp lệ"
+                }
+                else -> {
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("new_address", Triple(fullName, phone, address))
+                    navController.popBackStack()
+                }
+            }
         }
 
         val textWatcher = object : TextWatcher {
@@ -63,8 +74,6 @@ class ChangeAddressFragment : BaseFragment<FragmentChangeAddressBinding>() {
         etFullName.addTextChangedListener(textWatcher)
         etPhone.addTextChangedListener(textWatcher)
         etAddress.addTextChangedListener(textWatcher)
-
-        viewmodel.loadAddressFromArgsIfAvailable()
     }
 
     override fun observeViewModel() {
@@ -72,9 +81,9 @@ class ChangeAddressFragment : BaseFragment<FragmentChangeAddressBinding>() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewmodel.uiState.collectLatest {
                     with(binding) {
-                        etFullName.setText(it.fullName)
-                        etAddress.setText(it.address)
-                        etPhone.setText(it.phone)
+                        etFullName.setText(it.fullName ?: "")
+                        etAddress.setText(it.address ?: "")
+                        etPhone.setText(it.phone ?: "")
                     }
                 }
             }

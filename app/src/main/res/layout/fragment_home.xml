@@ -37,7 +37,9 @@
                     <include
                         layout="@layout/view_shimmer_banner"
                         android:id="@+id/shimmerBanner"
-                        android:visibility="visible"/>
+                        android:visibility="visible"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
 
                 </FrameLayout>
 
@@ -83,22 +85,27 @@
                         app:tabIndicatorColor="@color/primary"
                         app:tabMode="scrollable" />
 
-                    <!-- RecyclerView cho danh sách sách -->
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvPopularBooks"
-                        android:layout_marginTop="6dp"
+                    <!-- Container để switch giữa shimmer và list -->
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:itemCount="5"
-                        tools:listitem="@layout/item_book" />
+                        android:layout_height="wrap_content">
 
-                    <!-- Shimmer loading (optional) -->
-                    <include
-                        layout="@layout/view_shimmer_books"
-                        android:id="@+id/shimmerPopular"
-                        android:visibility="gone" />
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvPopularBooks"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:itemCount="5"
+                            tools:listitem="@layout/item_book" />
+
+                        <include
+                            android:id="@+id/shimmerPopular"
+                            layout="@layout/view_shimmer_books"
+                            android:visibility="visible"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </FrameLayout>
 
                     <!-- Nút Xem thêm -->
                     <androidx.appcompat.widget.AppCompatButton
@@ -142,22 +149,31 @@
                         app:tabIndicatorColor="@color/primary"
                         app:tabMode="scrollable" />
 
-                    <!-- RecyclerView cho danh sách sách -->
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvPriceBooks"
-                        android:layout_marginTop="6dp"
+                    <!-- Container để switch giữa shimmer và list -->
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:itemCount="5"
-                        tools:listitem="@layout/item_book" />
+                        android:layout_height="wrap_content">
 
-                    <!-- Shimmer loading (optional) -->
-                    <include
-                        layout="@layout/view_shimmer_books"
-                        android:id="@+id/shimmerPrice"
-                        android:visibility="gone" />
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvPriceBooks"
+                            android:layout_marginTop="6dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:itemCount="5"
+                            tools:listitem="@layout/item_book" />
+
+                        <!-- Shimmer loading (optional) -->
+                        <include
+                            layout="@layout/view_shimmer_books"
+                            android:id="@+id/shimmerPrice"
+                            android:visibility="visible"
+                            android:layout_height="match_parent"
+                            android:layout_width="wrap_content"/>
+                    </FrameLayout>
+                    <!-- RecyclerView cho danh sách sách -->
+
 
                     <!-- Nút Xem thêm -->
                     <androidx.appcompat.widget.AppCompatButton

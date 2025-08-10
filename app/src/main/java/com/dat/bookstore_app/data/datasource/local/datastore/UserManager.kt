@@ -1,4 +1,4 @@
-package com.plus.baseandroidapp.data.datasource.datastore
+package com.dat.bookstore_app.data.datasource.local.datastore
 
 import android.content.Context
 import android.util.Log
@@ -72,6 +72,7 @@ class UserManager @Inject constructor(
         dataStore.edit { preferences ->
             preferences.remove(KEY_ACCESS_TOKEN)
         }
+        emit(Unit) // thêm dòng này
     }
     companion object {
         private val KEY_ACCESS_TOKEN = stringPreferencesKey("access_token")

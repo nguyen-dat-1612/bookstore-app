@@ -16,4 +16,6 @@ interface AuthApiWithAuth {
 
     @POST("auth/change-password")
     suspend fun changePassword(@Body reqChangePasswordDTO: ChangePasswordRequestDTO): ApiResponse<Any?>
+
+
 }

@@ -116,4 +116,8 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.messaging)
+
+    implementation ("com.github.yalantis:ucrop:2.2.8")
+
+    implementation ("com.google.android.gms:play-services-auth:21.0.0")
 }

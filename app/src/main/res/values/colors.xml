@@ -38,4 +38,6 @@
     <color name="checkbox_check_mark">#000000</color> <!-- dấu check màu đen -->
 
     <color name="colorAccent">#FF4081</color>
+
+    <color name="grey_200">#CCCCCC</color>
 </resources>
