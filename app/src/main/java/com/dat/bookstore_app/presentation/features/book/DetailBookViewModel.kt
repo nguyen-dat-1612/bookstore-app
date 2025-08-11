@@ -35,11 +35,12 @@ class DetailBookViewModel @Inject constructor(
     }
 
     private fun loadBookDetail(bookId: Long) {
+        updateState { copy(isLoadBook = true) }
         viewModelScope.launch(exceptionHandler) {
             dispatchStateLoading(true)
             try {
                 when (val bookResult = getBookById(bookId)) {
-                    is Result.Success -> updateState { copy(book = bookResult.data) }
+                    is Result.Success -> updateState { copy(book = bookResult.data, isLoadBook = false) }
                     is Result.Error -> dispatchStateError(bookResult.throwable!!)
                 }
             } finally {

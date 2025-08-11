@@ -99,13 +99,11 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
         }
 
         btnBuyNow.setOnClickListener {
-            requireActivity().findNavController(R.id.nav_host_bottom)
-                .navigate(R.id.homeFragment)
+            sharedViewModel.switchTab("home")
 
         }
         btnLogin.setOnClickListener {
-            requireActivity().findNavController(R.id.nav_host_bottom)
-                .navigate(R.id.accountFragment)
+            sharedViewModel.switchTab("account")
         }
     }
 

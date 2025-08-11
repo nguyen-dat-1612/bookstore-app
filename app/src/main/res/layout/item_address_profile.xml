@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="#ffffff">
+
+    <!-- Hàng tên + số điện thoại -->
+    <TextView
+        android:id="@+id/tvNamePhone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Đạt Nguyễn | 0377398266"
+        android:textColor="#000000"
+        android:textSize="14sp" />
+
+    <!-- Tên in đậm ở phần đầu -->
+    <!-- Cách xử lý: dùng SpannableString để in đậm phần tên khi bind data -->
+
+    <!-- Địa chỉ (3 dòng) -->
+    <TextView
+        android:id="@+id/tvAddressLine1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Đường"
+        android:textColor="#222222"
+        android:textSize="13sp"
+        android:layout_marginTop="4dp" />
+
+    <TextView
+        android:id="@+id/tvAddressLine2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Phường Hiệp Bình Chánh, Thành Phố Thủ Đức, Hồ Chí Minh,"
+        android:textColor="#222222"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/tvAddressLine3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="VN"
+        android:textColor="#222222"
+        android:textSize="13sp" />
+
+    <!-- Nút nhỏ nền xanh nhạt -->
+    <TextView
+        android:id="@+id/btnTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Địa chỉ thanh toán mặc định"
+        android:textSize="12sp"
+        android:textColor="#3b7ddd"
+        android:background="@drawable/bg_tag_blue"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical" />
+
+    <!-- Đường kẻ phân cách -->
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#dddddd"
+        android:layout_marginTop="12dp" />
+
+</LinearLayout>

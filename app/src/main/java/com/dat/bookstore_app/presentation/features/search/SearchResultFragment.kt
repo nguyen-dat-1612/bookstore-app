@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import com.dat.bookstore_app.R
 import com.dat.bookstore_app.domain.enums.Sort
+import com.dat.bookstore_app.domain.models.Book
 import com.dat.bookstore_app.presentation.common.adapter.CommonLoadStateAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -93,9 +94,14 @@ class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>() {
 
                 launch {
                     viewModel.booksFlow.collectLatest { pagingData ->
-                        adapter.submitData(PagingData.empty())
                         adapter.submitData(pagingData)
                         binding.rvSearchBook.scrollToPosition(0)
+                        val snapshot = adapter.snapshot()
+                        if (snapshot.isEmpty()) {
+                            binding.filterDialog.root.visibility = View.VISIBLE
+                        } else {
+                            binding.filterDialog.root.visibility = View.GONE
+                        }
                     }
                 }
                 launch {

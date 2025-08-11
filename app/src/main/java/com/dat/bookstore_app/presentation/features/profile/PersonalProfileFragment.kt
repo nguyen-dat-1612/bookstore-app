@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -24,15 +25,15 @@ import com.dat.bookstore_app.databinding.FragmentPersonalProfileBinding
 import com.dat.bookstore_app.presentation.common.base.BaseFragment
 import com.dat.bookstore_app.utils.extension.loadUrl
 import com.yalantis.ucrop.UCrop
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import coil3.request.error
+import com.dat.bookstore_app.presentation.common.adapter.AddressProfileAdapter
+import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class PersonalProfileFragment : BaseFragment<FragmentPersonalProfileBinding>() {
@@ -50,6 +51,17 @@ class PersonalProfileFragment : BaseFragment<FragmentPersonalProfileBinding>() {
     private val navController by lazy {
         requireActivity().findNavController(R.id.nav_host_main)
     }
+    private val adapter by lazy {
+        AddressProfileAdapter(
+            onItemClick = {
+                navController.navigate(
+                    PersonalProfileFragmentDirections.actionPersonalProfileFragmentToUpdateAddressFragment(
+                        it
+                    )
+                )
+            }
+        )
+    }
 
     override fun getViewBinding(
         inflater: LayoutInflater,
@@ -59,6 +71,8 @@ class PersonalProfileFragment : BaseFragment<FragmentPersonalProfileBinding>() {
     }
 
     override fun setUpView() = with(binding) {
+
+        rvAddresss.adapter = adapter
 
         btnBack.setOnClickListener {
             navController.popBackStack()
@@ -126,31 +140,47 @@ class PersonalProfileFragment : BaseFragment<FragmentPersonalProfileBinding>() {
                 }
                 .show()
         }
+        btnAddAddress.setOnClickListener {
+            navController.navigate(PersonalProfileFragmentDirections.actionPersonalProfileFragmentToAddAddressFragment())
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadProfileAndAddress()
     }
 
     override fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collectLatest {
-                    if (it.user != null) {
-                        binding.etFullName.setText(it.user.fullName)
-                        binding.etAddress.setText(it.user.address)
-                        binding.etPhone.setText(it.user.phone)
-                        if (it.user.avatar != null)  {
-                            binding.ivAvatar.loadUrl(it.user.avatar)
-                        } else binding.ivAvatar.load(R.drawable.ic_placeholder_avatar)
+                launch {
+                    viewModel.uiState.collectLatest {
+                        if (it.user != null) {
+                            binding.etFullName.setText(it.user.fullName)
+                            binding.etAddress.setText(it.user.address)
+                            binding.etPhone.setText(it.user.phone)
+                            if (it.user.avatar != null)  {
+                                binding.ivAvatar.loadUrl(it.user.avatar)
+                            } else binding.ivAvatar.load(R.drawable.ic_placeholder_avatar)
+                        }
+                        if (it.isUpdateProfileSuccess) {
+                            showSuccessBanner(true, "Cập nhật thành công")
+                        }
+                        if (it.isLoadingUpdateProfile) {
+                            requireActivity().findViewById<View>(R.id.progressOverlay).visibility = View.VISIBLE
+                        } else {
+                            requireActivity().findViewById<View>(R.id.progressOverlay).visibility = View.GONE
+                        }
+                        if (it.addressList.isNotEmpty()) {
+                            adapter.submitList(it.addressList)
+                        }
                     }
                 }
                 launch {
-                    viewModel.loadingState.loading.collect { isLoading ->
-                        if (isLoading) {
-                            binding.progressOverlay.root.visibility = View.VISIBLE
+                    viewModel.errorsState.errors.collectLatest { error ->
+                        error?.let {
+                            showSuccessBanner(false, it.message.toString())
                         }
-//                        else {
-//                            delay(2000) // giữ loading 2 giây trước khi ẩn
-//                            binding.progressOverlay.root.visibility = View.GONE
-//                            // cập nhật dữ liệu ở đây nếu cần
-//                        }
                     }
                 }
             }
@@ -291,5 +321,36 @@ class PersonalProfileFragment : BaseFragment<FragmentPersonalProfileBinding>() {
         val folderPart = "avatar".toRequestBody("text/plain".toMediaTypeOrNull())
 
         viewModel.uploadFile(filePart, folderPart)
+    }
+
+    private fun showSuccessBanner(status: Boolean, message: String) = with(binding) {
+        successBanner.text = message
+        successBanner.visibility = View.VISIBLE
+        if (status) {
+            successBanner.setBackgroundColor(
+                ContextCompat.getColor(requireContext(), R.color.success_green)
+            )
+        } else {
+            successBanner.setBackgroundColor(
+                ContextCompat.getColor(requireContext(), R.color.error_red)
+            )
+        }
+        // Animation trượt xuống
+        successBanner.animate()
+            .translationY(0f)
+            .setDuration(300)
+            .withEndAction {
+                // Sau 3s, trượt lên và ẩn
+                successBanner.postDelayed({
+                    successBanner.animate()
+                        .translationY(-successBanner.height.toFloat())
+                        .setDuration(300)
+                        .withEndAction {
+                            successBanner.visibility = View.GONE
+                        }
+                        .start()
+                }, 3000)
+            }
+            .start()
     }
 }

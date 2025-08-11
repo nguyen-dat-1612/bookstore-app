@@ -115,10 +115,12 @@
             android:orientation="vertical"
             android:gravity="center">
 
+
             <ImageView
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:src="@drawable/empty_cart"/>
+                android:src="@drawable/ic_user_login"
+                app:tint="@color/grey_dark"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -167,8 +169,9 @@
             android:id="@+id/tvTitlePayment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:text="Thành tiền"
+            android:textStyle="bold"
             android:fontFamily="sans-serif"
             android:textColor="@android:color/black"
             android:layout_marginStart="16dp"
@@ -181,7 +184,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/tvTitlePayment"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:text="0 đ"
             android:fontFamily="sans-serif"
             android:textColor="@color/yellow_dark"
@@ -212,7 +215,7 @@
                 android:fontFamily="sans-serif"
                 android:textStyle="bold"
                 android:textColor="@android:color/white"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:layout_marginEnd="8dp" />
 
             <ImageView

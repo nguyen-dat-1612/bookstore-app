@@ -1,6 +1,7 @@
 package com.dat.bookstore_app.utils.extension
 
 import android.Manifest
+import android.app.Dialog
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -13,20 +14,27 @@ import android.widget.TextView
 import androidx.annotation.RequiresPermission
 import androidx.appcompat.widget.SearchView
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.text.style.RelativeSizeSpan
 import android.util.Log
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.view.Window
 import android.widget.EditText
 import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
+import androidx.core.widget.addTextChangedListener
 import coil3.load
 import coil3.request.crossfade
 import coil3.request.error
 import coil3.request.placeholder
 import com.dat.bookstore_app.R
+import com.dat.bookstore_app.databinding.DialogVerificationBinding
 import com.dat.bookstore_app.domain.enums.OrderStatus
 import com.dat.bookstore_app.network.ApiResponse
 import kotlinx.coroutines.channels.awaitClose
@@ -271,5 +279,49 @@ fun View.show() {
 }
 fun View.hide() {
     visibility = View.GONE
+}
+
+fun String.isValidEmail(): Boolean {
+    val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$".toRegex()
+    return this.matches(emailRegex)
+}
+
+fun Context.showVerificationDialog(
+    title: String,
+    message: String,
+    iconRes: Int
+) {
+    val binding = DialogVerificationBinding.inflate(LayoutInflater.from(this))
+    val dialog = Dialog(this)
+    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    dialog.setContentView(binding.root)
+    dialog.setCanceledOnTouchOutside(false)
+
+    dialog.window?.apply {
+        setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val width = (resources.displayMetrics.widthPixels * 0.8).toInt() // 80% chiều rộng
+        setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
+
+        setGravity(Gravity.CENTER)
+    }
+
+    binding.tvTitle.text = title
+    binding.tvMessage.text = message
+    binding.ivStatusIcon.setImageResource(iconRes)
+
+    dialog.show()
+
+    // Auto dismiss after 1.5s
+    binding.root.postDelayed({
+        dialog.dismiss()
+    }, 1500)
+}
+
+fun EditText.textChangesFlow() = callbackFlow<String> {
+    val listener = addTextChangedListener { text ->
+        trySend(text?.toString() ?: "")
+    }
+    awaitClose { removeTextChangedListener(listener) }
 }
 

@@ -20,8 +20,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Xác minh tài khoản thành công"
-        android:textSize="20sp"
+        android:fontFamily="sans-serif"
+        android:text="Đã gửi email xác nhận đặt lại mật khẩu"
+        android:textSize="18sp"
+        android:gravity="center"
         android:textStyle="bold"
         android:layout_marginTop="12dp" />
 
@@ -30,7 +32,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Tài khoản của bạn đã được xác minh..."
+        android:gravity="center"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/grey_dark"
+        android:text="Vui lòng kiểm tra hộp thư và làm theo hướng dẫn để hoàn tất việc đặt lại mật khẩu."
         android:layout_marginTop="8dp"
         android:textSize="14sp" />
 

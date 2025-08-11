@@ -1,29 +1,29 @@
 package com.dat.bookstore_app.presentation.features.home
 
 import android.graphics.Color
-import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.TypedValue
 import android.view.*
 import android.view.ViewTreeObserver.OnScrollChangedListener
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.dat.bookstore_app.R
 import com.dat.bookstore_app.databinding.FragmentHomeBinding
+import com.dat.bookstore_app.domain.enums.Sort
 import com.dat.bookstore_app.domain.models.Banner
-import com.dat.bookstore_app.domain.models.Book
 import com.dat.bookstore_app.presentation.common.adapter.BannerAdapter
-import com.dat.bookstore_app.presentation.common.adapter.BookAdapter
 import com.dat.bookstore_app.presentation.common.base.BaseFragment
 import com.dat.bookstore_app.presentation.features.main.BottomNavFragmentDirections
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -33,23 +33,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     private val viewModel: HomeViewModel by viewModels()
 
-    private val popularTabs = listOf("Phổ biến", "Mới nhất")
-    private val priceTabs = listOf("Giá tăng dần", "Giá giảm dần")
+    private val tabPopularItems = listOf(
+        Pair(Sort.SOLD_DESC, "Phổ biến"),
+        Pair(Sort.NEW_DESC, "Mới nhất")
+    )
 
+    private val tabPriceItems = listOf(
+        Pair(Sort.PRICE_ASC, "Giá tăng dần"),
+        Pair(Sort.PRICE_DESC, "Giá giảm dần")
+    )
     private val navController by lazy {
         requireActivity().findNavController(R.id.nav_host_main)
     }
 
-    private val popularAdapter by lazy {
-        BookAdapter(true) { book ->
-            navController.navigate(BottomNavFragmentDirections.actionBottomNavFragmentToDetailBookFragment(book))
-        }
-    }
-    private val priceAdapter by lazy {
-        BookAdapter(true) { book ->
-            navController.navigate(BottomNavFragmentDirections.actionBottomNavFragmentToDetailBookFragment(book))
-        }
-    }
 
     private val mockBanners = listOf(
         Banner("1", "https://cdn1.fahasa.com/media/magentothem/banner7/MCbooks_Vang_T7_Resize_840x320_1.png"),
@@ -69,87 +65,73 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     }
 
     override fun setUpView() = with(binding) {
-        rvPopularBooks.adapter = popularAdapter
-        rvPriceBooks.adapter = priceAdapter
-
         toggleShimmer(true)
 
-        // Setup tab popular
-        popularTabs.forEach { tabLayoutPopular.addTab(tabLayoutPopular.newTab().setText(it)) }
-        tabLayoutPopular.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                val books = when (tab.text) {
-                    "Phổ biến" -> viewModel.uiState.value.homeBooksResult.popularBooks.books
-                    "Mới nhất" -> viewModel.uiState.value.homeBooksResult.newBooks.books
-                    else -> emptyList()
+        setUpViewPager()
+        setUpScroll()
+        setUpOnListener()
+    }
+
+    private fun setUpViewPager() {
+        binding.apply {
+            setupViewPager(vpPopular, tabLayoutPopular, tabPopularItems) { sort ->
+                BookListPagerFragment.newInstance(sort)
+            }
+
+            setupViewPager(vpPriceBooks, tabLayoutPrice, tabPriceItems) { sort ->
+                BookListPagerFragment.newInstance(sort)
+            }
+        }
+    }
+
+    private fun setUpScroll() {
+        binding.apply {
+            // Search click
+            header.translationY = dpToPx(48f).toFloat()
+            val localBinding = binding
+            scrollChangedListener = OnScrollChangedListener {
+                if (!isAdded || view == null) return@OnScrollChangedListener
+
+                val scrollY = localBinding.scrollView.scrollY
+
+                val location = IntArray(2)
+                localBinding.headerPlaceholder.getLocationOnScreen(location)
+                val placeholderY = location[1]
+
+                val rootLocation = IntArray(2)
+                localBinding.root.getLocationOnScreen(rootLocation)
+                val rootTopY = rootLocation[1]
+
+                if (placeholderY <= rootTopY) {
+                    localBinding.header.translationY = 0f
+                    localBinding.header.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.primary))
+                } else {
+                    val offset = placeholderY - rootTopY
+                    localBinding.header.translationY = offset.toFloat()
+                    localBinding.header.setBackgroundColor(Color.TRANSPARENT)
                 }
-                popularAdapter.submitList(books)
+            }
+            scrollView.viewTreeObserver.addOnScrollChangedListener(scrollChangedListener)
+        }
+    }
+
+    private fun setUpOnListener() {
+        binding.apply {
+            layoutSearch.setOnClickListener {
+                navController.navigate(BottomNavFragmentDirections.actionBottomNavFragmentToSearchInputFragment(null))
             }
 
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-        })
-
-        // Setup tab price
-        priceTabs.forEach { tabLayoutPrice.addTab(tabLayoutPrice.newTab().setText(it)) }
-        tabLayoutPrice.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                val books = when (tab.text) {
-                    "Giá tăng dần" -> viewModel.uiState.value.homeBooksResult.lowToHighPriceBooks.books
-                    "Giá giảm dần" -> viewModel.uiState.value.homeBooksResult.highToLowPriceBooks.books
-                    else -> emptyList()
-                }
-                priceAdapter.submitList(books)
+            btnSeeMorePopular.setOnClickListener {
+                navController.navigate(R.id.action_bottomNavFragment_to_popularFragment)
+            }
+            btnSeeMorePrice.setOnClickListener {
+                navController.navigate(R.id.action_bottomNavFragment_to_newFragment)
             }
 
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-        })
-
-        // Search click
-        layoutSearch.setOnClickListener {
-            navController.navigate(BottomNavFragmentDirections.actionBottomNavFragmentToSearchInputFragment(null))
-        }
-
-        header.translationY = dpToPx(48f).toFloat()
-
-        // Safe binding usage in scroll listener
-        val localBinding = binding
-        scrollChangedListener = OnScrollChangedListener {
-            if (!isAdded || view == null) return@OnScrollChangedListener
-
-            val scrollY = localBinding.scrollView.scrollY
-
-            val location = IntArray(2)
-            localBinding.headerPlaceholder.getLocationOnScreen(location)
-            val placeholderY = location[1]
-
-            val rootLocation = IntArray(2)
-            localBinding.root.getLocationOnScreen(rootLocation)
-            val rootTopY = rootLocation[1]
-
-            if (placeholderY <= rootTopY) {
-                localBinding.header.translationY = 0f
-                localBinding.header.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.primary))
-            } else {
-                val offset = placeholderY - rootTopY
-                localBinding.header.translationY = offset.toFloat()
-                localBinding.header.setBackgroundColor(Color.TRANSPARENT)
+            swipeRefreshLayout.setOnRefreshListener {
+                setUpViewPager()
+                swipeRefreshLayout.isRefreshing = false
             }
-        }
-
-        scrollView.viewTreeObserver.addOnScrollChangedListener(scrollChangedListener)
-
-        btnSeeMorePopular.setOnClickListener {
-            navController.navigate(R.id.action_bottomNavFragment_to_popularFragment)
-        }
-        btnSeeMorePrice.setOnClickListener {
-            navController.navigate(R.id.action_bottomNavFragment_to_newFragment)
-        }
-
-        swipeRefreshLayout.setOnRefreshListener {
-            viewModel.loadData()
-            swipeRefreshLayout.isRefreshing = false
         }
     }
 
@@ -164,9 +146,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collectLatest {
                     binding.apply {
-                        popularAdapter.submitList(it.homeBooksResult.popularBooks.books)
-                        priceAdapter.submitList(it.homeBooksResult.lowToHighPriceBooks.books)
-
                         if (!isBannerInitialized) {
                             vpBanner.adapter = BannerAdapter(mockBanners)
                             vpBanner.offscreenPageLimit = 1
@@ -238,8 +217,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             shimmerPrice.shimmerBooks.visibility = View.VISIBLE
 
             vpBanner.visibility = View.INVISIBLE
-            rvPopularBooks.visibility = View.INVISIBLE
-            rvPriceBooks.visibility = View.INVISIBLE
         } else {
             // Stop shimmer
             Handler(Looper.getMainLooper()).postDelayed({
@@ -252,10 +229,28 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 shimmerPrice.shimmerBooks.visibility = View.GONE
 
                 vpBanner.visibility = View.VISIBLE
-                rvPopularBooks.visibility = View.VISIBLE
-                rvPriceBooks.visibility = View.VISIBLE
             }, 200)
         }
+    }
+
+    private fun setupViewPager(
+        viewPager: ViewPager2,
+        tabLayout: TabLayout,
+        tabItems: List<Pair<Sort, String>>,
+        fragmentCreator: (Sort) -> Fragment
+    ) {
+        viewPager.apply {
+            adapter = object : FragmentStateAdapter(this@HomeFragment) {
+                override fun getItemCount() = tabItems.size
+                override fun createFragment(position: Int) = fragmentCreator(tabItems[position].first)
+            }
+            isUserInputEnabled = false
+            offscreenPageLimit = tabItems.size
+        }
+
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            tab.text = tabItems[position].second
+        }.attach()
     }
 
     companion object {
@@ -265,3 +260,4 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         private val bannerInterval = 3000L // mỗi 3 giây đổi banner
     }
 }
+

@@ -57,7 +57,11 @@ class DetailBookFragment : BaseFragment<FragmentDetailBookBinding>() {
             navController.popBackStack()
         }
         btnAddToCart.setOnClickListener {
-            viewModel.addToCart()
+            if (mainViewModel.uiState.value.isLoggedIn) {
+                viewModel.addToCart()
+            } else {
+                navigateTabBottomNav("account")
+            }
         }
         btnSeeMore.root.setOnClickListener {
             navController.navigate(DetailBookFragmentDirections.actionDetailBookFragmentToBookInformationFragment(viewModel.book))
@@ -72,15 +76,20 @@ class DetailBookFragment : BaseFragment<FragmentDetailBookBinding>() {
             navController.navigate(R.id.action_detailBookFragment_to_searchInputFragment)
         }
         btnBuyNow.setOnClickListener {
-            val listCart = listOf(Cart(
-                id = 1,
-                createdAt = "",
-                updatedAt = "",
-                quantity = viewModel.uiState.value.count,
-                isSelected = true,
-                book = viewModel.uiState.value.book!!
-            ));
-            navController.navigate(DetailBookFragmentDirections.actionDetailBookFragmentToPaymentFragment(listCart.toTypedArray()))
+            if (mainViewModel.uiState.value.isLoggedIn) {
+                val listCart = listOf(Cart(
+                    id = 1,
+                    createdAt = "",
+                    updatedAt = "",
+                    quantity = viewModel.uiState.value.count,
+                    isSelected = true,
+                    book = viewModel.uiState.value.book!!
+                ));
+                navController.navigate(DetailBookFragmentDirections.actionDetailBookFragmentToPaymentFragment(listCart.toTypedArray()))
+            } else {
+                navigateTabBottomNav("account")
+            }
+
         }
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -122,15 +131,22 @@ class DetailBookFragment : BaseFragment<FragmentDetailBookBinding>() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.loadingState.loading.collectLatest {
+                    viewModel.errorsState.errors.collectLatest {
+                        it.let {
+                            showToast(it.message.toString())
+                        }
+                    }
+                }
+                launch {
+                    viewModel.uiState.collectLatest {
                         with(binding) {
-                            if (it) {
-                                shimmerDetailBook.root.startShimmer()
-                                shimmerDetailBook.root.visibility = View.VISIBLE
-                                scrollView.visibility = View.GONE
-                                bottomBar.visibility = View.GONE
+                            if (it.isLoadBook) {
+                                binding.shimmerDetailBook.root.startShimmer()
+                                binding.shimmerDetailBook.root.visibility = View.VISIBLE
+                                binding.scrollView.visibility = View.GONE
+                                binding.bottomBar.visibility = View.GONE
                             }
-                            if (!it && viewModel.uiState.value.book != null) {
+                            if (!it.isLoadBook && it.book != null){
                                 Handler(Looper.getMainLooper()).postDelayed({
                                     shimmerDetailBook.root.stopShimmer()
                                     shimmerDetailBook.root.visibility = View.GONE
@@ -139,13 +155,8 @@ class DetailBookFragment : BaseFragment<FragmentDetailBookBinding>() {
                                 }, 500)
                             }
                         }
-                    }
-                }
-                launch {
-                    viewModel.uiState.collectLatest {
                         if (it.book != null) {
                             setUpBook(book = it.book)
-
                         }
                         if (it.count != null) {
                             binding.tvCount.text = it.count.toString()

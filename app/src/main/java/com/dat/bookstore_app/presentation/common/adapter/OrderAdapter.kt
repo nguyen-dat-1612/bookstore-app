@@ -1,5 +1,7 @@
 package com.dat.bookstore_app.presentation.common.adapter
 
+import android.view.View
+import androidx.constraintlayout.helper.widget.Flow
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import com.dat.bookstore_app.R
@@ -52,49 +54,47 @@ class OrderAdapter(
 
     private fun renderButtons(order: Order, binding: ItemOrderHistoryBinding) {
         with(binding) {
-            btnRetryPayment.hide()
-            btnCancelOrder.hide()
-            btnBuyAgain.hide()
-            btnSeeDetail.hide()
+            val buttons = listOf(btnCancelOrder, btnRetryPayment, btnBuyAgain, btnSeeDetail)
+
+            // Ẩn hết
+            buttons.forEach { it.hide() }
+
             footerContainer.show()
 
             when (order.status) {
                 OrderStatus.PENDING -> {
                     if (order.paymentMethod != PaymentMethod.COD) {
                         btnRetryPayment.show()
-                        btnRetryPayment.setOnClickListener {
-                            onRetryPaymentClicked(order)
-                        }
+                        btnRetryPayment.setOnClickListener { onRetryPaymentClicked(order) }
                     }
-
                     btnCancelOrder.show()
-                    btnCancelOrder.setOnClickListener {
-                        onCancelOrderClicked(order)
-                    }
+                    btnCancelOrder.setOnClickListener { onCancelOrderClicked(order) }
                 }
-
                 OrderStatus.DELIVERED -> {
                     btnBuyAgain.show()
-                    btnBuyAgain.setOnClickListener {
-                        onBuyAgainClicked(order)
-                    }
+                    btnBuyAgain.setOnClickListener { onBuyAgainClicked(order) }
                 }
                 OrderStatus.CANCELLED -> {
                     btnBuyAgain.show()
-                    btnBuyAgain.setOnClickListener {
-                        onBuyAgainClicked(order)
-                    }
-
+                    btnBuyAgain.setOnClickListener { onBuyAgainClicked(order) }
                     btnCancelOrder.show()
                     btnCancelOrder.setBackgroundResource(R.drawable.bg_button_disabled)
                     btnCancelOrder.backgroundTintList = null
-                    btnCancelOrder.setTextColor(ContextCompat.getColor(binding.root.context, R.color.grey_dark))
+                    btnCancelOrder.setTextColor(ContextCompat.getColor(root.context, R.color.grey_dark))
                     btnCancelOrder.isEnabled = false
                 }
-
                 OrderStatus.ALL, OrderStatus.SHIPPING, OrderStatus.CONFIRMED -> {
                     btnSeeDetail.show()
                 }
+            }
+//            buttons.forEach { it.hide() }
+
+            val visibleCount = buttons.count { it.visibility == View.VISIBLE }
+
+            if (visibleCount == 1) {
+                buttonFlow.setHorizontalStyle(2) // 2 = END
+            } else {
+                buttonFlow.setHorizontalStyle(0) // 0 = SPREAD
             }
         }
     }

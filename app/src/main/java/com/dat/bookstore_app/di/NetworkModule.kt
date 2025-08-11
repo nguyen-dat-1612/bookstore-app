@@ -1,6 +1,7 @@
 package com.dat.bookstore_app.di
 
 import com.dat.bookstore_app.data.datasource.local.datastore.TokenProvider
+import com.dat.bookstore_app.data.datasource.remote.api.AddressApi
 import com.dat.bookstore_app.data.datasource.remote.api.AuthApiNoAuth
 import com.dat.bookstore_app.data.datasource.remote.api.AuthApiWithAuth
 import com.dat.bookstore_app.data.datasource.remote.api.BookApi
@@ -168,5 +169,11 @@ object NetworkModule {
     @Singleton
     fun provideFileApi(retrofit: Retrofit): FileApi {
         return retrofit.create(FileApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAddressApi(retrofit: Retrofit): AddressApi {
+        return retrofit.create(AddressApi::class.java)
     }
 }

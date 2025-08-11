@@ -3,7 +3,7 @@
     android:id="@+id/view_progress"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#7CFBF5F5"
+    android:background="#37FBF5F5"
     android:clickable="true"
     android:focusable="true"
     android:visibility="visible">

@@ -40,4 +40,7 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="grey_200">#CCCCCC</color>
+
+    <color name="success_green">#4CAF50</color> <!-- xanh lá thành công -->
+    <color name="error_red">#F44336</color>     <!-- đỏ thất bại -->
 </resources>

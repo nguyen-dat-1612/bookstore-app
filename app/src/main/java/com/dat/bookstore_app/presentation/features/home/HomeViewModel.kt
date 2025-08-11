@@ -13,25 +13,25 @@ class HomeViewModel @Inject constructor(
 ): BaseViewModel<HomeUiState>() {
     override fun initState() = HomeUiState()
 
-    fun loadData() {
-        dispatchStateLoading(true)
-        viewModelScope.launch(exceptionHandler) {
-            val response = homeUseCase.loadHomeBooks()
-            when(response) {
-                is Result.Success -> {
-                    updateState {
-                        copy(homeBooksResult = response.data)
-                    }
-                }
-                is Result.Error -> {
-                    dispatchStateError(response.throwable!!)
-                }
-            }
-            dispatchStateLoading(false)
-        }
-    }
-
-    init {
-        loadData()  // gọi loadData luôn khi tạo ViewModel, đảm bảo load lần đầu
-    }
+//    fun loadData() {
+//        dispatchStateLoading(true)
+//        viewModelScope.launch(exceptionHandler) {
+//            val response = homeUseCase.loadHomeBooks()
+//            when(response) {
+//                is Result.Success -> {
+//                    updateState {
+//                        copy(homeBooksResult = response.data)
+//                    }
+//                }
+//                is Result.Error -> {
+//                    dispatchStateError(response.throwable!!)
+//                }
+//            }
+//            dispatchStateLoading(false)
+//        }
+//    }
+//
+//    init {
+//        loadData()  // gọi loadData luôn khi tạo ViewModel, đảm bảo load lần đầu
+//    }
 }

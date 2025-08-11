@@ -5,6 +5,7 @@ import com.dat.bookstore_app.data.datasource.local.datastore.UserManager
 import com.dat.bookstore_app.data.datasource.remote.api.AuthApiNoAuth
 import com.dat.bookstore_app.data.datasource.remote.api.AuthApiWithAuth
 import com.dat.bookstore_app.data.datasource.remote.dto.ChangePasswordRequestDTO
+import com.dat.bookstore_app.data.datasource.remote.dto.ForgotPasswordRequestDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.LoginRequestDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.LoginResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.RegisterRequestDTO
@@ -87,6 +88,24 @@ class AuthRepositoryImpl @Inject constructor(
             val response = authApiNoAuth.outboundAuthentication(code)
             tokenProvider.updateToken(response.data!!.accessToken);
             response
+        }
+    }
+
+    override suspend fun forgotPassword(request: ForgotPasswordRequestDTO): Result<Any?> {
+        return apiCallResponse {
+            authApiNoAuth.forgotPassword(request)
+        }
+    }
+
+    override suspend fun resetRedirect(token: String): Result<Any?> {
+        return apiCallResponse {
+            authApiNoAuth.resetRedirect(token)
+        }
+    }
+
+    override suspend fun resendVerifyEmail(email: String): Result<Any?> {
+        return apiCallResponse {
+            authApiNoAuth.resendVerify(email)
         }
     }
 }

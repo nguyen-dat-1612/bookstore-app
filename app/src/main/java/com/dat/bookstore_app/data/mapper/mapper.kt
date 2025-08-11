@@ -1,6 +1,7 @@
 package com.dat.bookstore_app.data.mapper
 
 import androidx.core.text.HtmlCompat
+import com.dat.bookstore_app.data.datasource.remote.dto.AddressResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.BookResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.CartResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.CategoryResponseDTO
@@ -16,6 +17,7 @@ import com.dat.bookstore_app.data.datasource.remote.dto.PaymentResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.PaymentResultDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.PermissionResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.UserLogin
+import com.dat.bookstore_app.domain.models.Address
 import com.dat.bookstore_app.domain.models.Book
 import com.dat.bookstore_app.domain.models.Cart
 import com.dat.bookstore_app.domain.models.Category
@@ -217,6 +219,25 @@ fun FileResponseDTO.toDomain() : File {
         fileName = fileName,
         uploadedAt = uploadedAt
     )
+}
+
+fun AddressResponseDTO.toDomain() : Address {
+    return Address(
+        id = id,
+        fullName = fullName,
+        phoneNumber = phoneNumber,
+        province = province,
+        ward = ward,
+        addressDetail = addressDetail,
+        addressType = addressType,
+        isDefault = isDefault,
+        createdAt = createdAt,
+        updatedAt = updatedAt.orEmpty()
+    )
+}
+
+fun List<AddressResponseDTO>.toAddressDomain() : List<Address> {
+    return map { it.toDomain() }
 }
 
 

@@ -3,6 +3,7 @@ package com.dat.bookstore_app.presentation.features.auth
 import androidx.lifecycle.viewModelScope
 import com.dat.bookstore_app.domain.usecases.LoginGoogleUseCase
 import com.dat.bookstore_app.domain.usecases.LoginUseCase
+import com.dat.bookstore_app.domain.usecases.ResendVerifyUseCase
 import com.dat.bookstore_app.network.Result
 import com.dat.bookstore_app.presentation.common.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,7 +13,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
-    private val loginGoogleUseCase: LoginGoogleUseCase
+    private val loginGoogleUseCase: LoginGoogleUseCase,
+    private val resendVerifyUseCase: ResendVerifyUseCase
 ) : BaseViewModel<LoginUiState> (){
 
     override fun initState() = LoginUiState()
@@ -21,9 +23,11 @@ class LoginViewModel @Inject constructor(
         updateState {
             copy(isLoading = true)
         }
+
         viewModelScope.launch(exceptionHandler){
             dispatchStateLoading(true)
-            when(loginUseCase(uiState.value.email, uiState.value.password)){
+            val result = loginUseCase(uiState.value.email, uiState.value.password)
+            when(result){
                 is Result.Success -> {
                     updateState {
                         copy(isSuccess = true,
@@ -31,10 +35,22 @@ class LoginViewModel @Inject constructor(
                     }
                 }
                 is Result.Error -> {
-                    updateState {
-                        copy(isSuccess = false,
-                            isLoading = false)
+                    if (result.code != 401) {
+                        updateState {
+                            copy(isSuccess = false,
+                                isLoading = false)
+                        }
+                    } else {
+                        updateState {
+                            copy(
+                                isSuccess = false,
+                                isLoading = false,
+                                isVerify = true
+                            )
+                        }
                     }
+
+                    dispatchStateError(e = result.throwable!!)
                 }
             }
             dispatchStateLoading(false)
@@ -74,5 +90,26 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-
+    fun resendVerify() {
+        viewModelScope.launch(exceptionHandler) {
+            dispatchStateLoading(true)
+            try {
+                val result = resendVerifyUseCase(email = uiState.value.email)
+                when(result){
+                    is Result.Success -> {
+                        updateState {
+                            copy(isResendVerify = true)
+                        }
+                    }
+                    is Result.Error -> {
+                        dispatchStateError(e = result.throwable!!)
+                    }
+                }
+            } catch (e: Exception) {
+                dispatchStateError(e = e)
+            } finally {
+                dispatchStateLoading(false)
+            }
+        }
+    }
 }

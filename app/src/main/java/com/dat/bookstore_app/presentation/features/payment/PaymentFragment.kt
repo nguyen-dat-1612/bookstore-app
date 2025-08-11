@@ -24,6 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import com.dat.bookstore_app.R
 import com.dat.bookstore_app.domain.enums.OrderFlowState
 import com.dat.bookstore_app.domain.enums.PaymentMethod
+import com.dat.bookstore_app.presentation.common.adapter.AddressAdapter
 import com.dat.bookstore_app.presentation.common.adapter.BookPaymentAdapter
 import com.dat.bookstore_app.utils.helpers.CurrencyUtils
 import kotlinx.coroutines.flow.collectLatest
@@ -40,6 +41,13 @@ class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
     private val adapter by lazy {
         BookPaymentAdapter()
     }
+    private val addressAdapter by lazy {
+        AddressAdapter(
+            onAddressSelected = {
+                viewModel.updateChooseAddress(it)
+            }
+        )
+    }
     private var deeplinkHandled = false
     private var fallbackHandled = false
 
@@ -55,6 +63,7 @@ class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
             viewModel.loadData(args.cartList.toList())
         }
         rvBookPayment.adapter = adapter
+        rvAddresss.adapter = addressAdapter
 
         btnBack.setOnClickListener {
             navController.popBackStack()
@@ -62,6 +71,10 @@ class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
 
         btnOrder.setOnClickListener {
 //            requireActivity().findViewById<View>(R.id.progressOverlay).visibility = View.VISIBLE
+            if (viewModel.uiState.value.chooseAddress == null) {
+                showToast("Bạn chưa có hoặc chưa chọn địa chỉ giao hàng")
+                return@setOnClickListener
+            }
             viewModel.createOrderAndMaybePay()
         }
 
@@ -76,19 +89,14 @@ class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
             momoRadioButton.isChecked = false
             viewModel.updatePaymentMethod(PaymentMethod.VNPAY)
         }
-
-        btnChangeAddress.setOnClickListener {
-            with(viewModel.uiState.value) {
-                navController.navigate(
-                    PaymentFragmentDirections.actionPaymentFragmentToChangeAddressFragment(
-                        fullName = fullName,
-                        address = shippingAddress,
-                        phone = phone
-                    )
-                )
-            }
+        btnAddAddress.setOnClickListener{
+            navController.navigate(PaymentFragmentDirections.actionPaymentFragmentToAddAddressFragment())
+        }
+        binding.btnAddAddressEmpty.setOnClickListener {
+            navController.navigate(PaymentFragmentDirections.actionPaymentFragmentToAddAddressFragment())
         }
     }
+
 
     override fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -112,7 +120,6 @@ class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
 
                         val orderId = uiState.order?.id
                         val flowState = uiState.orderFlowState
-
 
                         val shouldNavigate = when (flowState) {
                             OrderFlowState.ORDER_CREATED_COD -> true
@@ -161,16 +168,6 @@ class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
         super.onStart()
         navController.currentBackStackEntry
             ?.savedStateHandle
-            ?.getLiveData<Triple<String, String, String>>("new_address")
-            ?.observe(viewLifecycleOwner) { (fullName, phone, address) ->
-                viewModel.updateAddress(fullName, phone, address)
-
-                navController.currentBackStackEntry?.savedStateHandle
-                    ?.remove<Triple<String, String, String>>("new_address")
-            }
-
-        navController.currentBackStackEntry
-            ?.savedStateHandle
             ?.getLiveData<Bundle>("deep_link_result")
             ?.observe(viewLifecycleOwner) { bundle ->
                 deeplinkHandled = true
@@ -187,6 +184,9 @@ class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
     override fun onResume() {
         super.onResume()
 
+        if (viewModel.uiState.value.order == null) {
+            viewModel.reloadAddresses()
+        }
         val state = viewModel.uiState.value
         if (
             state.orderFlowState == OrderFlowState.ORDER_CREATED_VNPAY_REDIRECTED &&
@@ -199,14 +199,23 @@ class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
     }
 
     private fun setUpUi(uiState: PaymentUiState) = with(binding) {
-        recipientName.text = uiState.fullName
-        recipientPhone.text = uiState.phone
-        recipientAddress.text = uiState.shippingAddress
         subtotalValue.text = CurrencyUtils.formatVND(uiState.subtotal)
         shippingValue.text = CurrencyUtils.formatVND(uiState.shipping)
         totalValue.text = CurrencyUtils.formatVND(uiState.total)
         adapter.submitList(uiState.cartList)
+
+        if (uiState.listAddress.isEmpty()) {
+            rvAddresss.visibility = View.GONE
+            emptyAddressContainer.visibility = View.VISIBLE
+            btnAddAddress.visibility = View.GONE
+        } else {
+            rvAddresss.visibility = View.VISIBLE
+            emptyAddressContainer.visibility = View.GONE
+            btnAddAddress.visibility = View.VISIBLE
+            addressAdapter.submitList(uiState.listAddress)
+        }
     }
+
 
     private fun openPaymentInCustomTab(url: String) {
         val builder = CustomTabsIntent.Builder()

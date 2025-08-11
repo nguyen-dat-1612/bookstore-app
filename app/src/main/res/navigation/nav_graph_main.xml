@@ -109,6 +109,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_bottomNavFragment_to_forgotFragment"
+            app:destination="@id/forgotFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
@@ -296,7 +303,26 @@
         android:id="@+id/personalProfileFragment"
         android:name="com.dat.bookstore_app.presentation.features.profile.PersonalProfileFragment"
         android:label="fragment_personal_profile"
-        tools:layout="@layout/fragment_personal_profile" />
+        tools:layout="@layout/fragment_personal_profile" >
+        <action
+            android:id="@+id/action_personalProfileFragment_to_updateAddressFragment"
+            app:destination="@id/updateAddressFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="address"
+                app:argType="com.dat.bookstore_app.domain.models.Address" />
+        </action>
+        <action
+            android:id="@+id/action_personalProfileFragment_to_addAddressFragment"
+            app:destination="@id/addAddressFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
     <fragment
         android:id="@+id/paymentFragment"
         android:name="com.dat.bookstore_app.presentation.features.payment.PaymentFragment"
@@ -336,6 +362,13 @@
                 android:name="phone"
                 app:argType="string" />
         </action>
+        <action
+            android:id="@+id/action_paymentFragment_to_addAddressFragment"
+            app:destination="@id/addAddressFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/orderSuccessFragment"
@@ -484,5 +517,20 @@
         android:name="com.dat.bookstore_app.presentation.features.auth.VerifyStateFragment"
         android:label="fragment_verify_state"
         tools:layout="@layout/fragment_verify_state" />
+    <fragment
+        android:id="@+id/forgotFragment"
+        android:name="com.dat.bookstore_app.presentation.features.auth.ForgotFragment"
+        android:label="fragment_forgot"
+        tools:layout="@layout/fragment_forgot" />
+    <fragment
+        android:id="@+id/addAddressFragment"
+        android:name="com.dat.bookstore_app.presentation.features.address.AddAddressFragment"
+        android:label="fragment_add_address"
+        tools:layout="@layout/fragment_add_address" />
+    <fragment
+        android:id="@+id/updateAddressFragment"
+        android:name="com.dat.bookstore_app.presentation.features.address.UpdateAddressFragment"
+        android:label="fragment_update_address"
+        tools:layout="@layout/fragment_update_address" />
 
 </navigation>

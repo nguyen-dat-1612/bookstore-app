@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Vòng ngoài cùng: vàng -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/yellow_dark" />
+            <size android:width="14dp" android:height="14dp" />
+        </shape>
+    </item>
+
+    <!-- Vòng giữa: trắng, nhỏ hơn vòng ngoài -->
+    <item android:left="3dp" android:top="3dp" android:right="3dp" android:bottom="3dp">
+        <shape android:shape="oval">
+            <solid android:color="@android:color/white" />
+            <size android:width="2dp" android:height="2dp" />
+        </shape>
+    </item>
+
+    <!-- Vòng trong cùng: cam, nhỏ hơn vòng giữa -->
+    <item android:left="7dp" android:top="7dp" android:right="7dp" android:bottom="7dp">
+        <shape android:shape="oval">
+            <solid android:color="@color/yellow_dark" />
+            <size android:width="12dp" android:height="12dp" />
+        </shape>
+    </item>
+
+</layer-list>

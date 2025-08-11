@@ -12,6 +12,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
     <LinearLayout
         android:id="@+id/filter_sort_bar"
         android:layout_width="match_parent"
@@ -89,6 +90,15 @@
             android:indeterminate="true"
             android:layout_gravity="center"/>
     </FrameLayout>
+
+    <include
+        layout="@layout/layout_empty_search"
+        android:id="@+id/filter_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/filter_sort_bar"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 
 

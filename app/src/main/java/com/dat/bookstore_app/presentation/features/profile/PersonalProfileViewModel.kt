@@ -5,13 +5,17 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.dat.bookstore_app.domain.usecases.GetAccountUseCase
+import com.dat.bookstore_app.domain.usecases.GetAddressUseCase
 import com.dat.bookstore_app.domain.usecases.UpdateProfileUseCase
 import com.dat.bookstore_app.domain.usecases.UploadFileUseCase
 import com.dat.bookstore_app.network.Result
 import com.dat.bookstore_app.presentation.common.base.BaseViewModel
 import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -24,35 +28,51 @@ class PersonalProfileViewModel @Inject constructor(
     application: Application,
     private val getAccountUseCase: GetAccountUseCase,
     private val updateProfile: UpdateProfileUseCase,
-    private val uploadFileUseCase: UploadFileUseCase
+    private val uploadFileUseCase: UploadFileUseCase,
+    private val getAddressUseCase: GetAddressUseCase
 ) : BaseViewModel<PersonalProfileUiState>() {
 
     override fun initState() = PersonalProfileUiState();
 
     init {
+        loadProfileAndAddress()
+    }
+
+    fun loadProfileAndAddress() {
         viewModelScope.launch(exceptionHandler) {
             dispatchStateLoading(true)
-            val result = getAccountUseCase()
-            when (result) {
-                is Result.Success -> {
-                    updateState {
-                        copy(
-                            user = result.data
-                        )
-                    }
+
+            supervisorScope {
+                val accountDeferred = async { getAccountUseCase() }
+                val addressDeferred = async { getAddressUseCase() }
+
+                val accountResult = accountDeferred.await()
+                val addressResult = addressDeferred.await()
+
+                when (accountResult) {
+                    is Result.Success -> updateState { copy(user = accountResult.data) }
+                    is Result.Error -> dispatchStateError(accountResult.throwable!!)
                 }
 
-                is Result.Error -> {
-                    dispatchStateError(e = result.throwable!!)
+                when (addressResult) {
+                    is Result.Success -> updateState { copy(addressList = addressResult.data) }
+                    is Result.Error -> dispatchStateError(addressResult.throwable!!)
                 }
             }
+
             dispatchStateLoading(false)
         }
     }
 
+
     fun updateAccount(fullName: String, address: String, phone: String) {
         viewModelScope.launch(exceptionHandler) {
             dispatchStateLoading(true)
+            updateState {
+                copy(
+                    isLoadingUpdateProfile = true
+                )
+            }
             try {
                 val avatar = uiState.value.user?.avatar
                 val result = updateProfile(
@@ -71,7 +91,8 @@ class PersonalProfileViewModel @Inject constructor(
                                     address = address,
                                     phone = phone
                                 ),
-                                isUpdateProfileSuccess = true
+                                isUpdateProfileSuccess = true,
+                                isLoadingUpdateProfile = false
                             )
                         }
                         dispatchStateLoading(false)
@@ -92,6 +113,11 @@ class PersonalProfileViewModel @Inject constructor(
     }
 
     fun uploadFile(file: MultipartBody.Part, folder: RequestBody) {
+        updateState {
+            copy(
+                isLoadingUpdateProfile = true
+            )
+        }
         viewModelScope.launch(exceptionHandler) {
             dispatchStateLoading(true)
             try {
@@ -102,7 +128,8 @@ class PersonalProfileViewModel @Inject constructor(
                             copy(
                                 user = user?.copy(
                                     avatar = result.data.url
-                                )
+                                ),
+                                isLoadingUpdateProfile = false
                             )
                         }
                     }

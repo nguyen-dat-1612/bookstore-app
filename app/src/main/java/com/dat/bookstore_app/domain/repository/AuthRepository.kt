@@ -1,6 +1,7 @@
 package com.dat.bookstore_app.domain.repository
 
 import com.dat.bookstore_app.data.datasource.remote.dto.ChangePasswordRequestDTO
+import com.dat.bookstore_app.data.datasource.remote.dto.ForgotPasswordRequestDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.LoginResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.RegisterRequestDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.RegisterResponseDTO
@@ -18,4 +19,8 @@ interface AuthRepository {
     suspend fun changePassword(changePasswordRequestDTO: ChangePasswordRequestDTO): Result<Any?>
     suspend fun getUser(): Result<UserLogin>
     suspend fun outboundAuthentication(code: String): Result<LoginResponseDTO>
+    suspend fun forgotPassword(request: ForgotPasswordRequestDTO): Result<Any?>
+    suspend fun resetRedirect(token: String): Result<Any?>
+    suspend fun resendVerifyEmail(email: String): Result<Any?>
+
 }

@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:text="Bạn chưa có đơn hàng nào"
             android:fontFamily="sans-serif"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:gravity="center"
             android:layout_marginTop="16dp"
             android:textColor="@android:color/black"/>

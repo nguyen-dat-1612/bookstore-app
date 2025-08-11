@@ -8,11 +8,13 @@ import com.dat.bookstore_app.data.datasource.remote.dto.OrderItemRequestDTO
 import com.dat.bookstore_app.data.mapper.toOrderItemRequestDTO
 import com.dat.bookstore_app.domain.enums.OrderFlowState
 import com.dat.bookstore_app.domain.enums.PaymentMethod
+import com.dat.bookstore_app.domain.models.Address
 import com.dat.bookstore_app.domain.models.Cart
 import com.dat.bookstore_app.domain.models.Order
 import com.dat.bookstore_app.domain.usecases.CreateOrderUseCase
 import com.dat.bookstore_app.domain.usecases.CreatePaymentUseCase
 import com.dat.bookstore_app.domain.usecases.GetAccountUseCase
+import com.dat.bookstore_app.domain.usecases.GetAddressUseCase
 import com.dat.bookstore_app.domain.usecases.GetBookByIdUseCase
 import com.dat.bookstore_app.domain.usecases.GetTransactionStatusUseCase
 import com.dat.bookstore_app.network.Result
@@ -30,6 +32,8 @@ class PaymentViewModel @Inject constructor(
     private val createOrderUseCase: CreateOrderUseCase,
     private val createPaymentUseCase: CreatePaymentUseCase,
     private val getTransactionStatusUseCase: GetTransactionStatusUseCase,
+    private val getAddressUseCase: GetAddressUseCase,
+    private val deleteOneCartUseCase: DeleteOneCartUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel<PaymentUiState>(){
 
@@ -41,7 +45,10 @@ class PaymentViewModel @Inject constructor(
             try {
                 supervisorScope {
                     val userInfoDeferred = async { getAccountUseCase() }
+                    val addressDeferred = async { getAddressUseCase() }
+
                     val userInfo = userInfoDeferred.await()
+                    val address = addressDeferred.await()
 
                     val subtotal = cartList.sumOf {
                         val price = it.book.price
@@ -59,9 +66,6 @@ class PaymentViewModel @Inject constructor(
                             updateState {
                                 copy(
                                     isLoadData = true,
-                                    fullName = user.fullName ?: "Chưa có tên",
-                                    phone = user.phone ?: "Chưa có số",
-                                    shippingAddress = user.address ?: "Chưa có địa chỉ",
                                     userId = user.id ?: 0L,
                                     cartList = cartList,
                                     subtotal = subtotal,
@@ -75,6 +79,19 @@ class PaymentViewModel @Inject constructor(
                             dispatchStateError(e = userInfo.throwable!!)
                         }
                     }
+                    when (address) {
+                        is Result.Success -> {
+                            updateState {
+                                copy(
+                                    listAddress = address.data,
+                                    chooseAddress = address.data.find { it.isDefault }
+                                )
+                            }
+                        }
+                        is Result.Error -> {
+                            dispatchStateError(e = address.throwable!!)
+                        }
+                    }
                 }
             } finally {
                 dispatchStateLoading(false)
@@ -82,21 +99,42 @@ class PaymentViewModel @Inject constructor(
         }
     }
 
+    fun reloadAddresses() {
+        viewModelScope.launch(exceptionHandler) {
+            when (val address = getAddressUseCase()) {
+                is Result.Success -> {
+                    updateState {
+                        copy(
+                            listAddress = address.data,
+                            chooseAddress = address.data.find { it.isDefault }
+                        )
+                    }
+                }
+                is Result.Error -> {
+                    dispatchStateError(address.throwable!!)
+                }
+            }
+        }
+    }
+
     fun createOrderAndMaybePay() {
         viewModelScope.launch(exceptionHandler) {
-
-            if (!validateOrderInfo()) {
-                dispatchStateLoading(false)
-                return@launch
-            }
 
             dispatchStateLoading(true)
             try {
                 val state = uiState.value
+                val fullAddress =  uiState.value.chooseAddress?.let {
+                    listOfNotNull(
+                        it.addressDetail,
+                        it.ward,
+                        it.province
+                    ).joinToString(", ")
+                }
+
                 val orderResult = createOrderUseCase(
-                    fullName = state.fullName,
-                    phone = state.phone,
-                    shippingAddress = state.shippingAddress,
+                    fullName = state.chooseAddress?.fullName!!,
+                    phone = state.chooseAddress.phoneNumber!!,
+                    shippingAddress = fullAddress!!,
                     paymentMethod = state.paymentMethod,
                     orderItems = state.cartList.toOrderItemRequestDTO(),
                     userId = state.userId
@@ -105,6 +143,10 @@ class PaymentViewModel @Inject constructor(
                 if (orderResult is Result.Success) {
                     val order = orderResult.data
                     updateState { copy(order = order) }
+
+                    state.cartList.forEach { cartItem ->
+                        deleteOneCartUseCase(cartItem.book.id)
+                    }
 
                     if (state.paymentMethod == PaymentMethod.VNPAY) {
                         val paymentResult = createPaymentUseCase(
@@ -179,41 +221,13 @@ class PaymentViewModel @Inject constructor(
         }
     }
 
-    fun updateAddress(fullName: String, phone: String, address: String) {
-        updateState {
-            copy(
-                fullName = fullName,
-                phone = phone,
-                shippingAddress = address
-            )
-        }
-    }
-
     fun clearPayment() {
         updateState { copy(payment = null) }
     }
 
-    private fun validateOrderInfo(): Boolean {
-        val state = uiState.value
-
-        // Chặn placeholder hoặc rỗng
-        if (state.fullName.isNullOrBlank() || state.fullName == "Chưa có tên") {
-            dispatchStateError(IllegalArgumentException("Vui lòng nhập họ tên"))
-            return false
+    fun updateChooseAddress(chooseAddress: Address) {
+        updateState {
+            copy(chooseAddress = listAddress.find { it.id == chooseAddress.id })
         }
-        if (state.phone.isNullOrBlank() || state.phone == "Chưa có số" || !state.phone.matches(Regex("^\\d{9,11}\$"))) {
-            dispatchStateError(IllegalArgumentException("Số điện thoại không hợp lệ"))
-            return false
-        }
-        if (state.shippingAddress.isNullOrBlank() || state.shippingAddress == "Chưa có địa chỉ") {
-            dispatchStateError(IllegalArgumentException("Vui lòng nhập địa chỉ giao hàng"))
-            return false
-        }
-        if (state.cartList.isEmpty()) {
-            dispatchStateError(IllegalArgumentException("Giỏ hàng trống"))
-            return false
-        }
-        return true
     }
-
 }

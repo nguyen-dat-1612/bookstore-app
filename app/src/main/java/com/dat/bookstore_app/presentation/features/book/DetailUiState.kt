@@ -4,6 +4,7 @@ import com.dat.bookstore_app.domain.models.Book
 import com.dat.bookstore_app.domain.models.Favorite
 
 data class DetailUiState(
+    val isLoadBook: Boolean = false,
     val book: Book? = null,
     val count: Int = 1,
     val addCartSuccess: Boolean = false,

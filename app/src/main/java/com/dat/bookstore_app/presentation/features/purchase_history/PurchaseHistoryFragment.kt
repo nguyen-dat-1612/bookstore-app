@@ -2,12 +2,15 @@ package com.dat.bookstore_app.presentation.features.purchase_history
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.dat.bookstore_app.R
 import com.dat.bookstore_app.databinding.FragmentPurchaseHistoryBinding
 import com.dat.bookstore_app.domain.enums.OrderStatus
 import com.dat.bookstore_app.presentation.common.base.BaseFragment
 import com.google.android.material.tabs.TabLayoutMediator
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class PurchaseHistoryFragment : BaseFragment<FragmentPurchaseHistoryBinding>() {
@@ -24,25 +27,29 @@ class PurchaseHistoryFragment : BaseFragment<FragmentPurchaseHistoryBinding>() {
         return FragmentPurchaseHistoryBinding.inflate(inflater, container, false)
     }
 
-    override fun setUpView() = with(binding) {
-        adapter = PurchaseHistoryPagerAdapter(this@PurchaseHistoryFragment)
-        viewPager.adapter = adapter
+    override fun setUpView() {
+        binding.apply {
+            btnBack.setOnClickListener {
+                navController.popBackStack()
+            }
 
-        val selectedStatus = arguments?.getString(ARG_ORDER_STATUS)?.let {
-            OrderStatus.valueOf(it)
-        } ?: OrderStatus.ALL
+            lifecycleScope.launch {
+                delay(250) // delay để tránh đơ UI lúc load fragment con
+                adapter = PurchaseHistoryPagerAdapter(this@PurchaseHistoryFragment)
+                viewPager.adapter = adapter
 
-        val initialTabIndex = OrderStatus.values().indexOf(selectedStatus)
-        viewPager.setCurrentItem(initialTabIndex, false)
+                val selectedStatus = arguments?.getString(ARG_ORDER_STATUS)?.let {
+                    OrderStatus.valueOf(it)
+                } ?: OrderStatus.ALL
 
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.text = OrderStatus.values()[position].title
-        }.attach()
+                val initialTabIndex = OrderStatus.values().indexOf(selectedStatus)
+                viewPager.setCurrentItem(initialTabIndex, false)
 
-        btnBack.setOnClickListener{
-            navController.popBackStack()
+                TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+                    tab.text = OrderStatus.values()[position].title
+                }.attach()
+            }
         }
-
 
     }
 

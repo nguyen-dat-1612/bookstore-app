@@ -1,5 +1,7 @@
 package com.dat.bookstore_app.di
 
+import com.dat.bookstore_app.data.repository.ProvinceRepositoryImpl
+import com.dat.bookstore_app.data.repositoryImpl.AddressRepositoryImpl
 import com.dat.bookstore_app.data.repositoryImpl.AuthRepositoryImpl
 import com.dat.bookstore_app.data.repositoryImpl.BookRepositoryImpl
 import com.dat.bookstore_app.data.repositoryImpl.CartRepositoryImpl
@@ -10,6 +12,7 @@ import com.dat.bookstore_app.data.repositoryImpl.OrderRepositoryImpl
 import com.dat.bookstore_app.data.repositoryImpl.PaymentRepositoryImpl
 import com.dat.bookstore_app.data.repositoryImpl.SearchRepositoryImpl
 import com.dat.bookstore_app.data.repositoryImpl.UserRepositoryImpl
+import com.dat.bookstore_app.domain.repository.AddressRepository
 import com.dat.bookstore_app.domain.repository.AuthRepository
 import com.dat.bookstore_app.domain.repository.BookRepository
 import com.dat.bookstore_app.domain.repository.CartRepository
@@ -18,6 +21,7 @@ import com.dat.bookstore_app.domain.repository.FavoriteRepository
 import com.dat.bookstore_app.domain.repository.FileRepository
 import com.dat.bookstore_app.domain.repository.OrderRepository
 import com.dat.bookstore_app.domain.repository.PaymentRepository
+import com.dat.bookstore_app.domain.repository.ProvinceRepository
 import com.dat.bookstore_app.domain.repository.SearchRepository
 import com.dat.bookstore_app.domain.repository.UserRepository
 import dagger.Binds
@@ -58,4 +62,10 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindFileRepository(fileRepositoryImpl: FileRepositoryImpl): FileRepository
+
+    @Binds
+    abstract fun bindAddressRepository(addressRepositoryImpl: AddressRepositoryImpl): AddressRepository
+
+    @Binds
+    abstract fun bindProvinceRepository(provinceRepositoryImpl: ProvinceRepositoryImpl): ProvinceRepository
 }

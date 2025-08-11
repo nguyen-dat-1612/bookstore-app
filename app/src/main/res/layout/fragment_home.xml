@@ -63,7 +63,7 @@
                 <View
                     android:id="@+id/view2"
                     android:layout_width="match_parent"
-                    android:layout_height="8dp"
+                    android:layout_height="4dp"
                     android:background="@color/grey_100"
                     app:layout_constraintTop_toBottomOf="@id/layoutBanner"
                     app:layout_constraintStart_toStartOf="parent"
@@ -90,14 +90,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/rvPopularBooks"
+                        <androidx.viewpager2.widget.ViewPager2
+                            android:id="@+id/vpPopular"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="300dp"
                             android:orientation="horizontal"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                            tools:itemCount="5"
-                            tools:listitem="@layout/item_book" />
+                            app:layout_constraintTop_toBottomOf="@id/tabLayoutPopular"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"/>
 
                         <include
                             android:id="@+id/shimmerPopular"
@@ -118,7 +118,6 @@
                         android:background="@drawable/bg_btn_see_more"
                         android:layout_gravity="center_horizontal"
                         android:paddingStart="40dp"
-                        android:layout_marginTop="8dp"
                         android:paddingEnd="40dp"
                         android:textSize="14sp"/>
 
@@ -127,7 +126,7 @@
                 <View
                     android:id="@+id/view1"
                     android:layout_width="match_parent"
-                    android:layout_height="8dp"
+                    android:layout_height="4dp"
                     android:background="@color/grey_100"
                     app:layout_constraintTop_toBottomOf="@id/layoutPopularTabs"
                     app:layout_constraintStart_toStartOf="parent"
@@ -154,15 +153,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/rvPriceBooks"
-                            android:layout_marginTop="6dp"
+                        <androidx.viewpager2.widget.ViewPager2
+                            android:id="@+id/vpPriceBooks"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="300dp"
                             android:orientation="horizontal"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                            tools:itemCount="5"
-                            tools:listitem="@layout/item_book" />
+                            app:layout_constraintTop_toBottomOf="@id/tabLayoutPrice"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"/>
 
                         <!-- Shimmer loading (optional) -->
                         <include
@@ -183,7 +181,6 @@
                         android:text="Xem thêm"
                         android:textAllCaps="false"
                         android:textColor="@color/primary"
-                        android:layout_marginTop="8dp"
                         android:background="@drawable/bg_btn_see_more"
                         android:layout_gravity="center_horizontal"
                         android:paddingStart="40dp"

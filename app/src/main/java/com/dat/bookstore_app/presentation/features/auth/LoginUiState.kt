@@ -4,5 +4,7 @@ data class LoginUiState(
     val isLoading: Boolean = false,
     val email: String = "user@gmail.com",
     val password: String = "123456",
-    val isSuccess: Boolean = false
+    val isSuccess: Boolean = false,
+    val isVerify: Boolean = false,
+    val isResendVerify: Boolean = false
 )
