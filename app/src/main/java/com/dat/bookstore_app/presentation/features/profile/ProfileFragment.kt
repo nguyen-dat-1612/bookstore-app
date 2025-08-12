@@ -111,15 +111,19 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
     override fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collectLatest { state ->
-                    if (state.user != null) {
-                        setUpProfile(state.user)
-                        viewModel.fetchAndEnableNotification()
-                        requestNotificationPermission()
+                launch {
+                    viewModel.uiState.collectLatest { state ->
+                        if (state.user != null) {
+                            setUpProfile(state.user)
+                            viewModel.fetchAndEnableNotification()
+                            requestNotificationPermission()
+                        }
                     }
                 }
-                viewModel.errorsState.errors.collectLatest {
-                    Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                launch {
+                    viewModel.errorsState.errors.collectLatest {
+                        Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }

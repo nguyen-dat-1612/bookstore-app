@@ -60,10 +60,10 @@
     <EditText
         android:id="@+id/emailInput"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="40dp"
         android:layout_weight="1"
         android:hint="Nhập email đã đăng ký tài khoản"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:layout_marginStart="18dp"
         android:layout_marginEnd="18dp"
         android:layout_marginTop="12dp"
@@ -120,7 +120,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Nếu bạn gặp vấn đề về mã xác nhận vui lòng gọi"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:gravity="center"
             android:fontFamily="sans-serif"
             android:textColor="@color/black"/>
@@ -129,13 +129,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="1900 12 13 14"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:gravity="center"
             android:textStyle="bold"
             android:fontFamily="sans-serif"
             android:textColor="@color/black"/>
     </LinearLayout>
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

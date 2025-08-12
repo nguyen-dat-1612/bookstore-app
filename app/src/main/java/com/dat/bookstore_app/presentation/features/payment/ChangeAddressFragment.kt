@@ -36,7 +36,7 @@ class ChangeAddressFragment : BaseFragment<FragmentChangeAddressBinding>() {
             navController.popBackStack()
         }
 
-        btnUpdate.setOnClickListener {
+        bottomNav.btnConfirm.setOnClickListener {
             val fullName = etFullName.text.toString().trim()
             val phone = etPhone.text.toString().trim()
             val address = etAddress.text.toString().trim()
@@ -62,7 +62,7 @@ class ChangeAddressFragment : BaseFragment<FragmentChangeAddressBinding>() {
 
         val textWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                btnUpdate.isEnabled =
+                bottomNav.btnConfirm.isEnabled =
                     etFullName.text?.toString()?.isNotBlank() == true &&
                             etPhone.text?.toString()?.isNotBlank() == true &&
                             etAddress.text?.toString()?.isNotBlank() == true
@@ -79,13 +79,21 @@ class ChangeAddressFragment : BaseFragment<FragmentChangeAddressBinding>() {
     override fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewmodel.uiState.collectLatest {
-                    with(binding) {
-                        etFullName.setText(it.fullName ?: "")
-                        etAddress.setText(it.address ?: "")
-                        etPhone.setText(it.phone ?: "")
+                launch {
+                    viewmodel.uiState.collectLatest {
+                        with(binding) {
+                            etFullName.setText(it.fullName ?: "")
+                            etAddress.setText(it.address ?: "")
+                            etPhone.setText(it.phone ?: "")
+                        }
                     }
                 }
+                launch {
+                    viewmodel.errorsState.errors.collect {
+                        showToast(it.message.toString())
+                    }
+                }
+
             }
         }
     }

@@ -156,8 +156,8 @@ class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
                     }
                 }
                 launch {
-                    viewModel.errorsState.errors.collect { throwable ->
-                        Toast.makeText(requireContext(), throwable.message ?: "Lỗi không xác định", Toast.LENGTH_SHORT).show()
+                    viewModel.errorsState.errors.collect {
+                        showToast(it.message.toString())
                     }
                 }
             }

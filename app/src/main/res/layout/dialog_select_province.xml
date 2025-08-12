@@ -1,47 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/contentCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="@color/white"
-    android:padding="16dp">
+    app:cardCornerRadius="16dp"
+    app:cardElevation="1dp"
+    app:cardUseCompatPadding="true"
+    app:strokeWidth="0dp"
+    app:cardBackgroundColor="@android:color/transparent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <EditText
-            android:id="@+id/etSearchProvince"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:textSize="14sp"
-            android:hint="Chọn tỉnh/thành phố"
-            android:drawablePadding="10dp"
-            android:drawableLeft="@android:drawable/ic_menu_search"
-            android:padding="8dp"
-            android:background="@drawable/bg_edittext_primary"
-            android:inputType="text" />
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@color/white"
+        android:gravity="center_horizontal">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnCancel"
-            android:layout_width="60dp"
-            android:layout_height="40dp"
-            android:text="Hủy"
-            android:textAllCaps="false"
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Chọn tỉnh/thành phố"
+            android:textSize="14sp"
             android:textStyle="bold"
-            android:textSize="14sp"
-            android:textColor="@color/yellow_light"
-            android:background="@android:color/transparent"/>
+            android:gravity="center"
+            android:layout_marginBottom="12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etSearchProvince"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:textSize="14sp"
+                android:hint="Tìm kiếm"
+                android:drawablePadding="10dp"
+                android:drawableLeft="@android:drawable/ic_menu_search"
+                android:padding="8dp"
+                android:background="@drawable/bg_edittext_primary"
+                android:inputType="text" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnCancel"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:text="Hủy"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textColor="@color/yellow_light"
+                android:background="@android:color/transparent"/>
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvProvinces"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:overScrollMode="never"
+            android:layout_marginTop="8dp"
+            tools:listitem="@layout/item_province" />
+
     </LinearLayout>
-    <!-- Ô tìm kiếm -->
 
-
-    <!-- Danh sách tỉnh/thành phố -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvProvinces"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:overScrollMode="never"
-        android:layout_marginTop="8dp"/>
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

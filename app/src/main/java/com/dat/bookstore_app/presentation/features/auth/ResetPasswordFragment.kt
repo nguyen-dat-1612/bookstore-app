@@ -1,4 +1,4 @@
-package com.dat.bookstore_app.presentation.features.settings
+package com.dat.bookstore_app.presentation.features.auth
 
 import android.text.method.PasswordTransformationMethod
 import android.view.LayoutInflater
@@ -6,37 +6,43 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.core.os.bundleOf
 import androidx.core.widget.doAfterTextChanged
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
-import com.dat.bookstore_app.databinding.FragmentCreatePasswordBinding
+import com.dat.bookstore_app.databinding.FragmentResetPasswordBinding
 import com.dat.bookstore_app.presentation.common.base.BaseFragment
+import com.dat.bookstore_app.R
+import com.dat.bookstore_app.presentation.features.main.MainSharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import com.dat.bookstore_app.R
-import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
-class CreatePasswordFragment : BaseFragment<FragmentCreatePasswordBinding>() {
+class ResetPasswordFragment : BaseFragment<FragmentResetPasswordBinding>() {
 
-    private val createPasswordViewModel: CreatePasswordViewModel by viewModels<CreatePasswordViewModel>()
+    private val viewModel: ResetPasswordViewModel by viewModels()
+    private val sharedViewModel: MainSharedViewModel by activityViewModels()
 
     private val navController by lazy {
         requireActivity().findNavController(R.id.nav_host_main)
     }
-
     override fun getViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
-    ): FragmentCreatePasswordBinding {
-        return FragmentCreatePasswordBinding.inflate(inflater, container, false)
+    ): FragmentResetPasswordBinding {
+        return FragmentResetPasswordBinding.inflate(inflater, container, false)
     }
 
-    override fun setUpView() = with(binding) {
+    override fun setUpView() = with(binding){
+        val token = arguments?.getString(ARG_TOKEN)
+        if (token != null) {
+            viewModel.setToken(token)
+        }
         btnBack.setOnClickListener {
             navController.popBackStack()
         }
@@ -45,7 +51,7 @@ class CreatePasswordFragment : BaseFragment<FragmentCreatePasswordBinding>() {
             val confirmPassword = reNewPasswordInput.text.toString().trim()
 
             if (validatePasswords(newPassword, confirmPassword)) {
-                createPasswordViewModel.createPassword(newPassword,confirmPassword)
+                viewModel.resetPassword(newPassword,confirmPassword)
             }
         }
         setupRealTimeValidation()
@@ -58,17 +64,21 @@ class CreatePasswordFragment : BaseFragment<FragmentCreatePasswordBinding>() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    createPasswordViewModel.uiState.collectLatest {
-                        if (it.isCreatePasswordSuccess) {
+                    viewModel.uiState.collectLatest {
+                        if (it.isLoading) {
+                            requireActivity().findViewById<View>(R.id.progressOverlay).visibility = View.VISIBLE
+                        } else {
+                            requireActivity().findViewById<View>(R.id.progressOverlay).visibility = View.GONE
+                        }
+                        if (it.isSuccess) {
+                            sharedViewModel.switchTab("account")
                             navController.popBackStack()
                         }
                     }
                 }
                 launch {
-                    createPasswordViewModel.errorsState.errors.collect {
-                        if (it.message != null) {
-                            showToast(it.message!!)
-                        }
+                    viewModel.errorsState.errors.collect { throwable ->
+                        showToast(throwable.message.toString() ?: "Lỗi không xác định")
                     }
 
                 }
@@ -129,4 +139,11 @@ class CreatePasswordFragment : BaseFragment<FragmentCreatePasswordBinding>() {
         return valid
     }
 
+    companion object {
+        private const val ARG_TOKEN = "token"
+
+        fun newInstance(token: String) = ResetPasswordFragment().apply {
+            arguments = bundleOf(ARG_TOKEN to token)
+        }
+    }
 }

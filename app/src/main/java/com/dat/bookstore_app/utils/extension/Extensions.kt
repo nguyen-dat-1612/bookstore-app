@@ -36,6 +36,7 @@ import coil3.request.placeholder
 import com.dat.bookstore_app.R
 import com.dat.bookstore_app.databinding.DialogVerificationBinding
 import com.dat.bookstore_app.domain.enums.OrderStatus
+import com.dat.bookstore_app.domain.models.ErrorResponse
 import com.dat.bookstore_app.network.ApiResponse
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -43,6 +44,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import retrofit2.Response
 import com.dat.bookstore_app.network.Result
 import com.dat.bookstore_app.presentation.features.purchase_history.OrderStepUI
+import com.squareup.moshi.Moshi
 import retrofit2.HttpException
 import java.io.IOException
 import java.text.NumberFormat
@@ -78,12 +80,19 @@ suspend fun <T> apiCallResponse(apiCall: suspend () -> ApiResponse<T>) : Result<
         Result.Success(data)
     } catch (e: HttpException) {
         val code = e.code()
-        val errorBody = e.response()?.errorBody()?.string()
-        Log.e("apiCallResponse", "HTTP $code: $errorBody")
+        val errorBodyString = e.response()?.errorBody()?.string()
+        Log.e("apiCallResponse", "HTTP $code: $errorBodyString")
+
+        val moshi = Moshi.Builder().build()
+        val adapter = moshi.adapter(ErrorResponse::class.java)
+
+        val errorResponse = errorBodyString?.let { adapter.fromJson(it) }
+        val message = errorResponse?.message ?: "Có lỗi xảy ra"
+
         Result.Error(
             code = code,
-            message = "HTTP $code: $errorBody",
-            throwable = e
+            message = message,
+            throwable = IllegalArgumentException(message)
         )
     } catch (e: IOException ) {
         Log.e("apiCallResponse", "IO: $e")

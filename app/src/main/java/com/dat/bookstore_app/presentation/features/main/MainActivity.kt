@@ -113,24 +113,52 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 if (uri.scheme == "myapp" && uri.host == "verify-return") {
                     val status = uri.getQueryParameter("status") ?: ""
                     val message =  uri.getQueryParameter("message") ?: ""
-                    sharedViewModel.switchTab("auth")
+//                    sharedViewModel.switchTab("account")
 
-                    val navOptions = NavOptions.Builder()
-                        .setEnterAnim(R.anim.slide_in_right)
-                        .setExitAnim(R.anim.slide_out_left)
-                        .setPopEnterAnim(R.anim.slide_in_left)
-                        .setPopExitAnim(R.anim.slide_out_right)
-                        .build()
+//                    val navOptions = NavOptions.Builder()
+//                        .setEnterAnim(R.anim.slide_in_right)
+//                        .setExitAnim(R.anim.slide_out_left)
+//                        .setPopEnterAnim(R.anim.slide_in_left)
+//                        .setPopExitAnim(R.anim.slide_out_right)
+//                        .build()
 
                     Handler(Looper.getMainLooper()).postDelayed({
                         navController.navigate(
                             R.id.verifyStateFragment,
-                            bundleOf("status" to status, "message" to message),
-                            navOptions
+                            bundleOf("status" to status, "message" to message)
                         )
                     }, 500)
                 }
             }
+
+            intent?.data?.let { uri ->
+                val navHostFragment = supportFragmentManager
+                    .findFragmentById(R.id.nav_host_main) as NavHostFragment
+                val navController = navHostFragment.navController
+
+                if (uri.scheme == "myapp" && uri.host == "forgot-return") {
+                    val status = uri.getQueryParameter("status") ?: ""
+                    val token =  uri.getQueryParameter("token") ?: ""
+//                    sharedViewModel.switchTab("account")
+
+//                    val navOptions = NavOptions.Builder()
+//                        .setEnterAnim(R.anim.slide_in_right)
+//                        .setExitAnim(R.anim.slide_out_left)
+//                        .setPopEnterAnim(R.anim.slide_in_left)
+//                        .setPopExitAnim(R.anim.slide_out_right)
+//                        .build()
+
+                    if (status == "success") {
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            navController.navigate(
+                                R.id.resetPasswordFragment,
+                                bundleOf("token" to token)
+                            )
+                        }, 0)
+                    }
+                }
+            }
+
         }
 
     }

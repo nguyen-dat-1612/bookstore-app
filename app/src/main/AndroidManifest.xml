@@ -62,6 +62,16 @@
                     android:host="payment-return"/>
             </intent-filter>
 
+            <!-- Deeplink từ intent://payment-return -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:scheme="myapp"
+                    android:host="forgot-return"/>
+            </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>

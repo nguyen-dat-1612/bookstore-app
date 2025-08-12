@@ -1,8 +1,7 @@
 package com.dat.bookstore_app.presentation.features.auth
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.dat.bookstore_app.domain.usecases.ForgotPasswordUseCase
+import com.dat.bookstore_app.domain.usecases.ResetPasswordUseCase
 import com.dat.bookstore_app.network.Result
 import com.dat.bookstore_app.presentation.common.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,29 +9,33 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ForgotViewModel @Inject constructor(
-    private val forgotPasswordUseCase: ForgotPasswordUseCase
-): BaseViewModel<ForgotUiState>(){
-    override fun initState() = ForgotUiState()
+class ResetPasswordViewModel @Inject constructor(
+    private val resetPasswordUseCase: ResetPasswordUseCase
+) : BaseViewModel<ResetPasswordUiState>() {
 
-    fun onForgot(email: String) {
+    override fun initState() = ResetPasswordUiState()
+
+    fun resetPassword(
+        newPassword: String,
+        confirmPassword: String
+    ) {
         viewModelScope.launch(exceptionHandler) {
             dispatchStateLoading(true)
             updateState {
                 copy(isLoading = true)
             }
             try {
-                val result = forgotPasswordUseCase(email = email)
-                when(result) {
+                val result = resetPasswordUseCase(uiState.value.token!!,newPassword, confirmPassword)
+                when (result) {
                     is Result.Success -> {
                         updateState {
-                            copy(
-                                isSuccess = true,
-                                isLoading = false
-                            )
+                            copy(isLoading = false, isSuccess = true)
                         }
                     }
                     is Result.Error -> {
+                        updateState {
+                            copy(isLoading = false, isSuccess = false)
+                        }
                         dispatchStateError(e = result.throwable!!)
                     }
                 }
@@ -43,11 +46,13 @@ class ForgotViewModel @Inject constructor(
             }
         }
     }
-    fun resetViewModel() {
+
+    fun setToken(
+        token: String
+    ) {
         updateState {
             copy(
-                isSuccess = false,
-                isLoading = false
+                token = token
             )
         }
     }

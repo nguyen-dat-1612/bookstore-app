@@ -121,6 +121,23 @@ class OrderListFragment : BaseFragment<FragmentOrderListBinding>() {
                 }
             }
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.uiState.collectLatest { state ->
+                        binding.progressOverlay.root.visibility =
+                            if (state.isLoading) View.VISIBLE else View.GONE
+                    }
+                }
+                launch {
+                    viewModel.errorsState.errors.collect {
+                        showToast(it.message.toString())
+                    }
+                }
+
+            }
+        }
     }
 
     companion object {

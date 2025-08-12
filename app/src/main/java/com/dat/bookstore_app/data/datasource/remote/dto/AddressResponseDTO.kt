@@ -20,7 +20,7 @@ data class AddressResponseDTO(
     val addressDetail: String?,
     @Json(name = "addressType")
     val addressType: AddressType?,
-    @Json(name = "default")
+    @Json(name = "is_default")
     val isDefault: Boolean,
     @Json(name = "createdAt")
     val createdAt: String?,

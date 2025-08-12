@@ -34,7 +34,7 @@ class PurchaseHistoryFragment : BaseFragment<FragmentPurchaseHistoryBinding>() {
             }
 
             lifecycleScope.launch {
-                delay(250) // delay để tránh đơ UI lúc load fragment con
+                delay(150) // delay để tránh đơ UI lúc load fragment con
                 adapter = PurchaseHistoryPagerAdapter(this@PurchaseHistoryFragment)
                 viewPager.adapter = adapter
 

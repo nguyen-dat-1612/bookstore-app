@@ -1,14 +1,14 @@
 package com.dat.bookstore_app.presentation.features.address
 
 import android.app.AlertDialog
-import android.os.Bundle
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -28,7 +28,6 @@ import com.dat.bookstore_app.presentation.common.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-
 @AndroidEntryPoint
 class AddAddressFragment : BaseFragment<FragmentAddAddressBinding>() {
 
@@ -45,6 +44,9 @@ class AddAddressFragment : BaseFragment<FragmentAddAddressBinding>() {
     }
 
     override fun setUpView() = with(binding){
+        btnHouse.tvCategoryName.text = "Nhà riêng"
+        btnOffice.tvCategoryName.text = "Văn phòng"
+        
         editTextTinhThanhPho.setOnClickListener {
             viewModel.loadProvinces()
             showProvinceDialog(viewModel.uiState.value.provinces)
@@ -57,11 +59,7 @@ class AddAddressFragment : BaseFragment<FragmentAddAddressBinding>() {
                 showCommuneDialog(viewModel.uiState.value.communes)
             }
         }
-        val addressTypeAdapter = AddressTypeAdapter(AddressType.values().toList()) { selectedType ->
-            viewModel.updateAddressType(selectedType)
-        }
-        rvAddressTypes.adapter = addressTypeAdapter
-        btnAddAddress.setOnClickListener {
+        bottomNav.btnConfirm.setOnClickListener {
             viewModel.addAddress(
                 fullName = editTextTen.text.toString(),
                 phoneNumber = editTextSoDienThoai.text.toString(),
@@ -72,6 +70,12 @@ class AddAddressFragment : BaseFragment<FragmentAddAddressBinding>() {
         btnBack.setOnClickListener {
             navController.popBackStack()
         }
+        binding.btnHouse.container.setOnClickListener {
+            viewModel.updateAddressType(AddressType.HOME)
+        }
+        binding.btnOffice.container.setOnClickListener {
+            viewModel.updateAddressType(AddressType.OFFICE)
+        }
     }
 
     override fun observeViewModel() {
@@ -81,6 +85,13 @@ class AddAddressFragment : BaseFragment<FragmentAddAddressBinding>() {
                     viewModel.uiState.collectLatest { uiState ->
                         if (uiState.isSuccess) {
                             navController.popBackStack()
+                        }
+                        if (viewModel.uiState.value.addressType == AddressType.HOME) {
+                            binding.btnHouse.imgTick.visibility = View.VISIBLE
+                            binding.btnOffice.imgTick.visibility = View.GONE
+                        } else {
+                            binding.btnHouse.imgTick.visibility = View.GONE
+                            binding.btnOffice.imgTick.visibility = View.VISIBLE
                         }
                     }
                 }
@@ -93,8 +104,10 @@ class AddAddressFragment : BaseFragment<FragmentAddAddressBinding>() {
         }
     }
 
+
     private fun showProvinceDialog(provinces: List<Province>) {
         val binding = DialogSelectProvinceBinding.inflate(layoutInflater)
+        binding.tvTitle.setText(R.string.hint_tinh_thanh_pho)
 
         val alertDialog = AlertDialog.Builder(requireContext())
             .setView(binding.root)
@@ -110,12 +123,10 @@ class AddAddressFragment : BaseFragment<FragmentAddAddressBinding>() {
         binding.rvProvinces.layoutManager = LinearLayoutManager(requireContext())
         binding.rvProvinces.adapter = adapter
 
-        // Nút hủy
         binding.btnCancel.setOnClickListener {
             alertDialog.dismiss()
         }
 
-        // Lọc danh sách khi nhập
         binding.etSearchProvince.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -128,11 +139,25 @@ class AddAddressFragment : BaseFragment<FragmentAddAddressBinding>() {
         })
 
         alertDialog.show()
+
+        // Đặt nền trong suốt để bo góc nhìn rõ
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        // Tính 70% chiều rộng màn hình
+        val displayMetrics = DisplayMetrics()
+        requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val dialogWidth = (displayMetrics.widthPixels * 0.8).toInt()
+
+        // Set lại kích thước dialog
+        alertDialog.window?.setLayout(
+            dialogWidth,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
 
     private fun showCommuneDialog(communes: List<Commune>) {
         val binding = DialogSelectProvinceBinding.inflate(layoutInflater)
-
+        binding.tvTitle.setText(R.string.hint_phuong_xa)
         val alertDialog = AlertDialog.Builder(requireContext())
             .setView(binding.root)
             .setCancelable(true)
@@ -164,6 +189,21 @@ class AddAddressFragment : BaseFragment<FragmentAddAddressBinding>() {
         })
 
         alertDialog.show()
+
+
+        // Đặt nền trong suốt để bo góc nhìn rõ
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        // Tính 70% chiều rộng màn hình
+        val displayMetrics = DisplayMetrics()
+        requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val dialogWidth = (displayMetrics.widthPixels * 0.8).toInt()
+
+        // Set lại kích thước dialog
+        alertDialog.window?.setLayout(
+            dialogWidth,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
 
 

@@ -147,32 +147,10 @@
     </ScrollView>
 
     <!-- Footer with Button -->
-    <LinearLayout
-        android:id="@+id/footerContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:clipToPadding="false"
-        android:elevation="12dp"
-        android:orientation="vertical"
-        android:paddingTop="12dp"
-        android:paddingBottom="20dp"
-        app:layout_constraintBottom_toBottomOf="parent">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnUpdate"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginStart="18dp"
-            android:layout_marginEnd="18dp"
-            android:background="@drawable/bg_button_primary"
-            android:backgroundTint="?attr/colorPrimary"
-            android:fontFamily="sans-serif"
-            android:text="Xác nhận"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+    <include
+        android:id="@+id/bottomNav"
+        layout="@layout/layout_bottom_container"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

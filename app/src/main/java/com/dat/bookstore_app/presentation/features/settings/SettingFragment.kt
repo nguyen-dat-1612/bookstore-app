@@ -78,10 +78,18 @@ class SettingFragment : BaseFragment<FragmentSettingBinding>() {
     override fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                settingViewModel.uiState.collectLatest {
-                    if (it.LogoutSuccess) {
-                        mainViewModel.updateLoggedIn(false)
-                        navController.popBackStack()
+                launch {
+                    settingViewModel.uiState.collectLatest {
+                        if (it.LogoutSuccess) {
+                            mainViewModel.updateLoggedIn(false)
+                            navController.popBackStack()
+                        }
+
+                    }
+                }
+                launch {
+                    settingViewModel.errorsState.errors.collect {
+                        showToast(it.message.toString())
                     }
                 }
 

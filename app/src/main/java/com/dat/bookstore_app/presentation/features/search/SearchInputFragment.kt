@@ -98,12 +98,15 @@ class SearchInputFragment : BaseFragment<FragmentSearchBinding>() {
     override fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collectLatest {
-                    adapter.submitList(it.listHistorySearch)
+                launch {
+                    viewModel.uiState.collectLatest {
+                        adapter.submitList(it.listHistorySearch)
+                    }
                 }
-
-                viewModel.errorsState.errors.collectLatest {
-                    Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                launch {
+                    viewModel.errorsState.errors.collect {
+                        showToast(it.message.toString())
+                    }
                 }
             }
         }

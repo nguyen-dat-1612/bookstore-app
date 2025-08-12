@@ -58,7 +58,7 @@ class ChangePasswordFragment : BaseFragment<FragmentChangePasswordBinding>() {
 
         setupRealTimeValidation()
 
-        changePasswordButton.setOnClickListener {
+        bottomNav.btnConfirm.setOnClickListener {
             val oldPass = currentPasswordInput.text.toString().trim()
             val newPass = newPasswordInput.text.toString().trim()
             val rePass = reNewPasswordInput.text.toString().trim()
@@ -72,13 +72,20 @@ class ChangePasswordFragment : BaseFragment<FragmentChangePasswordBinding>() {
     override fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collectLatest {
-                    if (it.isChangePasswordSuccess) {
-                        Toast.makeText(requireContext(), "Đổi mật khẩu thành công", Toast.LENGTH_SHORT).show()
-                        navController.popBackStack()
+                launch {
+                    viewModel.uiState.collectLatest {
+                        if (it.isChangePasswordSuccess) {
+                            Toast.makeText(requireContext(), "Đổi mật khẩu thành công", Toast.LENGTH_SHORT).show()
+                            navController.popBackStack()
+                        }
+                        if (it.messageError != null) {
+                            Toast.makeText(requireContext(), it.messageError, Toast.LENGTH_SHORT).show()
+                        }
                     }
-                    if (it.messageError != null) {
-                        Toast.makeText(requireContext(), it.messageError, Toast.LENGTH_SHORT).show()
+                }
+                launch {
+                    viewModel.errorsState.errors.collect {
+                        showToast(it.message.toString())
                     }
                 }
             }

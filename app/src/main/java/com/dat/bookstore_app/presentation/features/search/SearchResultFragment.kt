@@ -109,6 +109,11 @@ class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>() {
                         binding.header.searchInput.setText(viewModel.query)
                     }
                 }
+                launch {
+                    viewModel.errorsState.errors.collect {
+                        showToast(it.message.toString())
+                    }
+                }
 
             }
         }

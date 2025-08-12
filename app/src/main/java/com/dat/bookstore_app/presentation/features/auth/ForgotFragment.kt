@@ -59,6 +59,7 @@ class ForgotFragment : BaseFragment<FragmentForgotBinding>() {
                                 message = "Vui lòng kiểm tra hộp thư và làm theo hướng dẫn để hoàn tất việc đặt lại mật khẩu.",
                                 iconRes = R.drawable.ic_check_circle_green
                             )
+                            reset()
                         }
                         if (it.isLoading) {
                             requireActivity().findViewById<ProgressBar>(R.id.progressBar).visibility = View.VISIBLE
@@ -76,6 +77,11 @@ class ForgotFragment : BaseFragment<FragmentForgotBinding>() {
                 }
             }
         }
+    }
+
+    fun reset() = with(binding) {
+        emailInput.text.clear()
+        viewModel.resetViewModel()
     }
 
 }

@@ -94,17 +94,24 @@ class DetailOrderFragment : BaseFragment<FragmentDetailOrderBinding>() {
     override fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collectLatest { state ->
-                    state.order?.let { order ->
-                        renderOrderInfo(order)
-                        renderReceiverInfo(order)
-                        renderSteps(order)
-                        renderButtons(order)
-                        renderPaymentIfAny(state)
-                        renderText(state)
+                launch {
+                    viewModel.uiState.collectLatest { state ->
+                        state.order?.let { order ->
+                            renderOrderInfo(order)
+                            renderReceiverInfo(order)
+                            renderSteps(order)
+                            renderButtons(order)
+                            renderPaymentIfAny(state)
+                            renderText(state)
+                        }
+                        if (state.canCancelOrder) {
+                            navController.popBackStack()
+                        }
                     }
-                    if (state.canCancelOrder) {
-                        navController.popBackStack()
+                }
+                launch {
+                    viewModel.errorsState.errors.collect {
+                        showToast(it.message.toString())
                     }
                 }
             }

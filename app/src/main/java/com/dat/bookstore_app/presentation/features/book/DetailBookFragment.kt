@@ -2,6 +2,7 @@ package com.dat.bookstore_app.presentation.features.book
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -133,6 +134,7 @@ class DetailBookFragment : BaseFragment<FragmentDetailBookBinding>() {
                 launch {
                     viewModel.errorsState.errors.collectLatest {
                         it.let {
+                            Log.d("DetailBookFragment", "observeViewModel: $it")
                             showToast(it.message.toString())
                         }
                     }

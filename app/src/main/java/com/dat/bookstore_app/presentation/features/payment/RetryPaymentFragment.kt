@@ -77,6 +77,11 @@ class RetryPaymentFragment : BaseFragment<FragmentRetryPaymentBinding>() {
                     }
                 }
                 launch {
+                    viewModel.errorsState.errors.collect {
+                        showToast(it.message.toString())
+                    }
+                }
+                launch {
                     viewModel.uiState.collectLatest {
                         if (it.order != null) {
                             setUpUi(it.order);

@@ -18,6 +18,6 @@ data class AddressRequestDTO(
     val addressDetail: String,
     @Json(name = "addressType")
     val addressType: AddressType,
-    @Json(name = "isDefault")
+    @Json(name = "is_default")
     val isDefault: Boolean
 )

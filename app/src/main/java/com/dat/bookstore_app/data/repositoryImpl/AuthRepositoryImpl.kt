@@ -10,6 +10,7 @@ import com.dat.bookstore_app.data.datasource.remote.dto.LoginRequestDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.LoginResponseDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.RegisterRequestDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.RegisterResponseDTO
+import com.dat.bookstore_app.data.datasource.remote.dto.ResetPasswordRequestDTO
 import com.dat.bookstore_app.data.datasource.remote.dto.UserLogin
 import com.dat.bookstore_app.data.mapper.toDomain
 import com.dat.bookstore_app.domain.models.User
@@ -94,6 +95,12 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun forgotPassword(request: ForgotPasswordRequestDTO): Result<Any?> {
         return apiCallResponse {
             authApiNoAuth.forgotPassword(request)
+        }
+    }
+
+    override suspend fun resetPassword(request: ResetPasswordRequestDTO): Result<Any?> {
+        return apiCallResponse {
+            authApiNoAuth.resetPassword(request)
         }
     }
 

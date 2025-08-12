@@ -142,6 +142,13 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
                 }
             }
         }
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                cartViewModel.errorsState.errors.collect {
+                    showToast(it.message.toString())
+                }
+            }
+        }
     }
     private fun showRequireLoginLayout() = with(binding) {
         layoutLoginRequest.show()

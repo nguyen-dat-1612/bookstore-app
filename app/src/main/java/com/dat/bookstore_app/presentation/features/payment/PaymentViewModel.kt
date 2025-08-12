@@ -164,6 +164,7 @@ class PaymentViewModel @Inject constructor(
                             }
                         } else if (paymentResult is Result.Error) {
                             dispatchStateError(paymentResult.throwable!!)
+                            dispatchStateLoading(false)
                         }
                     } else {
                         updateState {
@@ -172,6 +173,7 @@ class PaymentViewModel @Inject constructor(
                     }
                 } else if (orderResult is Result.Error) {
                     dispatchStateError(orderResult.throwable!!)
+                    dispatchStateLoading(false)
                 }
             } finally {
 //                dispatchStateLoading(false)

@@ -209,8 +209,16 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>() {
                                 if (error.code() == 401) {
                                     // xử lý 401
                                 } else if (error.code() == 400) {
-                                    showSuccessBanner(false, "Tài khoản hoặc mật khẩu không chính xác!")
+                                    showSuccessBanner(
+                                        false,
+                                        "Tài khoản hoặc mật khẩu không chính xác!"
+                                    )
                                 }
+                            } else {
+                                showSuccessBanner(
+                                    false,
+                                    error.message.toString()
+                                )
                             }
                         }
                     }

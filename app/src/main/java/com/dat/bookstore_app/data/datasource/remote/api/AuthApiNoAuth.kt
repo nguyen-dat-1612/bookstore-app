@@ -47,7 +47,7 @@ interface AuthApiNoAuth {
 
 
     @Headers("No-Authentication: true")
-    @POST("auth/password")
+    @POST("auth/reset")
     suspend fun resetPassword(@Body request: ResetPasswordRequestDTO): ApiResponse<Any?>
 
 

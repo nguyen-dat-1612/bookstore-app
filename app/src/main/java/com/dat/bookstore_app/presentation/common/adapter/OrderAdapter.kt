@@ -50,6 +50,10 @@ class OrderAdapter(
                 }
             }
         }
+        fun updateStatusUI(status: OrderStatus, order: Order) {
+            binding.orderStatus.text = status.title
+            renderButtons(order, binding)
+        }
     }
 
     private fun renderButtons(order: Order, binding: ItemOrderHistoryBinding) {
@@ -106,7 +110,8 @@ class OrderAdapter(
         }
 
         override fun areContentsTheSame(oldItem: Order, newItem: Order): Boolean {
-            return oldItem == newItem
+            return oldItem.status == newItem.status &&
+                    oldItem.totalAmount == newItem.totalAmount
         }
 
         override fun getChangePayload(oldItem: Order, newItem: Order): Any? {
@@ -120,6 +125,16 @@ class OrderAdapter(
 
     override fun createViewHolder(binding: ItemOrderHistoryBinding): OrderViewHolder {
         return OrderViewHolder(binding)
+    }
+    override fun onBindViewHolder(holder: OrderViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isNotEmpty()) {
+            val payload = payloads[0]
+            if (payload is OrderStatus) {
+                holder.updateStatusUI(payload, getItem(position)!!)
+                return
+            }
+        }
+        super.onBindViewHolder(holder, position, payloads)
     }
 
 }
