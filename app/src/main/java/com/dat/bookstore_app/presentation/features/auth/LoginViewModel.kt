@@ -112,4 +112,13 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
+
+    fun resetState() {
+        updateState {
+            copy(
+                isSuccess = false,
+                isLoading = false
+            )
+        }
+    }
 }

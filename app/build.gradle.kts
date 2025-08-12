@@ -60,14 +60,14 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     // Coroutine
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
 
     // Preferences DataStore
     implementation("androidx.datastore:datastore-preferences:1.1.7")
 
     // Navigation
-    val nav_version = "2.7.6"
+    val nav_version = "2.8.0"
     implementation("androidx.navigation:navigation-fragment:$nav_version")
     implementation("androidx.navigation:navigation-ui:$nav_version")
 
@@ -94,13 +94,13 @@ dependencies {
     implementation ("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.16")
 
     //Paging 3
-    implementation ("androidx.paging:paging-runtime:3.2.1")
+    implementation ("androidx.paging:paging-runtime:3.3.0")
 
     // Swipe
     implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     // Kotlin Serialization
-    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
 
     // FlexboxLayout
     implementation ("com.google.android.flexbox:flexbox:3.0.0")
@@ -109,7 +109,7 @@ dependencies {
     implementation ("com.facebook.shimmer:shimmer:0.5.0")
 
     //CustomTabsIntent
-    implementation ("androidx.browser:browser:1.6.0")
+    implementation ("androidx.browser:browser:1.7.0")
 
     // Lottie (Animation)
     implementation("com.airbnb.android:lottie:6.4.0")

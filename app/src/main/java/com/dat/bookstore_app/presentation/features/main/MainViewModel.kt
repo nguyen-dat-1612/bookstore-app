@@ -14,6 +14,10 @@ class MainViewModel @Inject constructor(
 ): BaseViewModel<MainUiState>() {
     override fun initState() = MainUiState()
 
+    init {
+        load()
+    }
+
     fun load() {
         viewModelScope.launch(exceptionHandler) {
             getAccessTokenUseCase().collect { isLoggedIn ->

@@ -9,6 +9,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -28,9 +29,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             val title = data["title"] ?: "Thông báo"
             val message = data["body"] ?: ""
             val orderId = data["orderId"]
+            val url = data["image"]?: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQgw2Cb1LxQ2DEqsJZMmkbWtMnjSnB4-iUTQ&s"
 
             if (orderId != null) {
-                showOrderDetailNotification(title, message, orderId)
+                showOrderDetailNotification(title, message, orderId, url)
             }
         }
     }
@@ -39,8 +41,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         super.handleIntent(intent)
 
     }
-
-    private fun showOrderDetailNotification(title: String, message: String, orderId: String) {
+    private fun showOrderDetailNotification(title: String, message: String, orderId: String, url: String) {
         val channelId = getString(R.string.default_notification_channel_id)
 
         val intent = Intent(this, MainActivity::class.java).apply {
@@ -55,6 +56,15 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        // Tải ảnh từ URL
+        val bitmap = try {
+            val connection = java.net.URL(url).openConnection()
+            connection.connect()
+            android.graphics.BitmapFactory.decodeStream(connection.getInputStream())
+        } catch (e: Exception) {
+            null
+        }
+
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_circle_notifications)
             .setContentTitle(title)
@@ -62,13 +72,26 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .setAutoCancel(true)
             .setColor(getColor(R.color.colorAccent))
             .setContentIntent(pendingIntent)
-            .setPriority(NotificationCompat.PRIORITY_HIGH) // Đảm bảo hiển thị ngay
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+
+        // Nếu tải được ảnh thì dùng BigPictureStyle
+        if (bitmap != null) {
+            notificationBuilder.setStyle(
+                NotificationCompat.BigPictureStyle()
+                    .bigPicture(bitmap)
+                    .bigLargeIcon(null as Bitmap?)
+                    .setSummaryText(message)
+            )
+        } else {
+            // fallback nếu không tải được ảnh
+            notificationBuilder.setStyle(NotificationCompat.BigTextStyle().bigText(message))
+        }
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
         createNotificationChannel(notificationManager, channelId)
         notificationManager.notify(orderId.hashCode(), notificationBuilder.build())
     }
+
 
     private fun showNotification(title: String, message: String) {
 

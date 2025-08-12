@@ -41,11 +41,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             .findFragmentById(R.id.nav_host_main) as NavHostFragment
         navController = navHostFragment.navController
 
-        if (viewModel.uiState.value.isLoggedIn) {
-            processIntent(intent)
-        } else {
-            Log.d("Notifications", "Not logged in")
-        }
+        processIntent(intent)
     }
 
     override fun observeViewModel() {

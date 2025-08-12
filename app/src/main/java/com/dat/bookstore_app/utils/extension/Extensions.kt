@@ -33,6 +33,7 @@ import coil3.load
 import coil3.request.crossfade
 import coil3.request.error
 import coil3.request.placeholder
+import coil3.size.Size
 import com.dat.bookstore_app.R
 import com.dat.bookstore_app.databinding.DialogVerificationBinding
 import com.dat.bookstore_app.domain.enums.OrderStatus
@@ -136,7 +137,7 @@ fun TextView.setDiscountedPrice(originalPrice: Int, discountPercent: Int) {
     // Màu xám
     spannable.setSpan(ForegroundColorSpan(Color.GRAY), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
     // Thu nhỏ kích thước (70%)
-    spannable.setSpan(RelativeSizeSpan(0.7f), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+    spannable.setSpan(RelativeSizeSpan(0.5f), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
     this.text = spannable
 }
@@ -332,5 +333,14 @@ fun EditText.textChangesFlow() = callbackFlow<String> {
         trySend(text?.toString() ?: "")
     }
     awaitClose { removeTextChangedListener(listener) }
+}
+
+fun ImageView.loadUrlFull(url: String) {
+    this.load(url) {
+        size(Size.ORIGINAL) // tải ảnh kích thước gốc
+        crossfade(true)
+        placeholder(R.drawable.placeholder)
+        error(R.drawable.placeholder)
+    }
 }
 

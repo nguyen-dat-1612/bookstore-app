@@ -2,6 +2,7 @@ package com.dat.bookstore_app.presentation.features.favorites
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -57,12 +58,18 @@ class FavoriteListFragment : BaseFragment<FragmentFavoriteListBinding>() {
     override fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                favoriteListViewModel.favoritePagingFlow.collectLatest {
-                    adapter.submitData(it)
+                launch {
+                    favoriteListViewModel.favoritePagingFlow.collectLatest {
+                        adapter.submitData(it)
+                    }
                 }
-                favoriteListViewModel.uiState.collectLatest { state ->
-                    if (state.addCartSuccess) {
-                        showToast("Sản phẩm đã được thêm vào giỏ hàng")
+                launch {
+                    favoriteListViewModel.uiState.collectLatest { state ->
+                        if (state.addCartSuccess) {
+                            showToast("Sản phẩm đã được thêm vào giỏ hàng")
+                            favoriteListViewModel.resetState()
+
+                        }
                     }
                 }
             }

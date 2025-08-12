@@ -22,8 +22,8 @@ class FavoriteAdapter(
             binding.apply {
                 with(item.book) {
                     txName.text = title
-                    val discountAmount = price - price * discount * 100
-                    txPrice.text = CurrencyUtils.formatVND(discountAmount)
+                    val discountedPrice = price * (1 - discount / 100.0)
+                    txPrice.text = CurrencyUtils.formatVND(discountedPrice)
                     ivThumbnail.loadUrl(thumbnail)
                 }
                 btnDelete.setOnClickListener {

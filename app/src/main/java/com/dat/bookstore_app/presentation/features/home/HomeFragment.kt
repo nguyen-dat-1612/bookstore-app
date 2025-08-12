@@ -49,8 +49,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     private val mockBanners = listOf(
         Banner("1", "https://cdn1.fahasa.com/media/magentothem/banner7/MCbooks_Vang_T7_Resize_840x320_1.png"),
-        Banner("2", "https://cdn1.fahasa.com/media/magentothem/banner7/Trangbopviet_Slidebanner_840x320.png"),
-        Banner("3", "https://cdn1.fahasa.com/media/magentothem/banner7/NgoaiVan_T7_LDP_840x320.png")
+        Banner("2", "https://cdn1.fahasa.com/media/magentothem/banner7/MCbooks_Vang_T7_Resize_840x320_1.png"),
+        Banner("3", "https://cdn1.fahasa.com/media/magentothem/banner7/MCbooks_Vang_T7_Resize_840x320_1.png")
     )
 
     private var scrollChangedListener: OnScrollChangedListener? = null

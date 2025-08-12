@@ -54,7 +54,17 @@ class UpdateAddressFragment : BaseFragment<FragmentUpdateAddressBinding>() {
             editTextSoDienThoai.setText(address.phoneNumber)
             editTextDiaChiNhanHang.setText(address.addressDetail)
             checkBoxGiaoHangMacDinh.isChecked = address.isDefault
+            if(address.isDefault) {
+                // Chặn click
+                binding.checkBoxGiaoHangMacDinh.isClickable = false
+                binding.checkBoxGiaoHangMacDinh.isFocusable = false
 
+                // Làm mờ
+                binding.checkBoxGiaoHangMacDinh.alpha = 0.5f
+
+                // Ẩn nút xóa
+                binding.btnDeleteAddress.visibility = View.GONE
+            }
             if (address.addressType == AddressType.HOME) {
                 btnHouse.imgTick.visibility = View.VISIBLE
             } else {
@@ -99,7 +109,7 @@ class UpdateAddressFragment : BaseFragment<FragmentUpdateAddressBinding>() {
             navController.popBackStack()
         }
         btnDeleteAddress.setOnClickListener {
-            viewModel.deleteAddress()
+            showDeleteConfirmDialog()
         }
     }
 
@@ -254,5 +264,30 @@ class UpdateAddressFragment : BaseFragment<FragmentUpdateAddressBinding>() {
             dialogWidth,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
+    }
+    private fun showDeleteConfirmDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_confirm_delete, null)
+        val alertDialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+
+        dialogView.findViewById<View>(R.id.btnCancel).setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        dialogView.findViewById<View>(R.id.btnConfirm).setOnClickListener {
+            viewModel.deleteAddress()
+            alertDialog.dismiss()
+        }
+
+        alertDialog.show()
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        // 80% chiều rộng màn hình
+        val displayMetrics = DisplayMetrics()
+        requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val dialogWidth = (displayMetrics.widthPixels * 0.7).toInt()
+        alertDialog.window?.setLayout(dialogWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 }

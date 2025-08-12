@@ -142,7 +142,7 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnSendEmailVerify"
             android:layout_width="300dp"
-            android:layout_height="48dp"
+            android:layout_height="44dp"
             android:background="@drawable/bg_button_white_primary"
             style="@style/Widget.AppCompat.Button"
             android:text="Gửi lại email xác minh"

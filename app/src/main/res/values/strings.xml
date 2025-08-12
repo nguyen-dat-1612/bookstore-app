@@ -15,11 +15,11 @@
     <string name="label_date">Đặt <font color="#FF0000"><b>*</b></font></string>
     <string name="hint_date">Đặt</string>
     <string name="label_ten">Họ và tên <font color="#FF0000"><b>*</b></font></string>
-    <string name="hint_ten">Nhập họ và tên người nhận</string>
+    <string name="hint_ten">Nhập họ và tên người nhận (ví dụ: Nguyễn Văn A)</string>
     <string name="label_nguyen">Nguyễn</string>
     <string name="hint_nguyen">Nguyễn</string>
     <string name="label_so_dien_thoai">Số điện thoại <font color="#FF0000"><b>*</b></font></string>
-    <string name="hint_so_dien_thoai">Nhập số điện thoại</string>
+    <string name="hint_so_dien_thoai">Nhập số điện thoại (ví dụ: 0901234567)</string>
     <string name="label_quoc_gia">Quốc gia <font color="#FF0000"><b>*</b></font></string>
     <string name="hint_quoc_gia">Quốc gia</string>
     <string name="label_tinh_thanh_pho">Tỉnh/Thành phố <font color="#FF0000"><b>*</b></font></string>
@@ -27,7 +27,14 @@
     <string name="label_phuong_xa">Phường/Xã <font color="#FF0000"><b>*</b></font></string>
     <string name="hint_phuong_xa">Chọn phường/xã</string>
     <string name="label_dia_chi_nhan_hang">Địa chỉ nhận hàng <font color="#FF0000"><b>*</b></font></string>
-    <string name="hint_dia_chi_nhan_hang">Nhập số nhà, tên đường</string>
+    <string name="hint_dia_chi_nhan_hang">Nhập số nhà, tên đường (ví dụ: 123 Lê Lợi)</string>
     <string name="label_thanh_toan_mac_dinh">Địa chỉ thanh toán mặc định</string>
     <string name="label_giao_hang_mac_dinh">Địa chỉ giao hàng mặc định</string>
+
+    <string name="label_email">Email <font color="#FF0000"><b>*</b></font></string>
+    <string name="hint_email">Nhập địa chỉ email (ví dụ: nguyenvana@example.com)</string>
+    <string name="note_password">
+    <b>Lưu ý: </b> <font color="#000000">Mật khẩu phải từ 8–64 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt, không chứa khoảng trắng</font>
+    </string>
+
 </resources>

@@ -190,15 +190,18 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>() {
                         if (state.isSuccess ) {
                             mainViewModel.updateLoggedIn(true)
                             Toast.makeText(context, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
+                            loginViewModel.resetState()
                         }
                         if (state.isVerify) {
                             binding.btnSendEmailVerify.visibility = View.VISIBLE
                             showSuccessBanner(true, "Tài khoản chưa được xác minh, vui lòng gửi yêu cầu xác minh tài khoản")
+                            loginViewModel.resetState()
                         } else {
                             binding.btnSendEmailVerify.visibility = View.GONE
                         }
                         if (state.isResendVerify) {
                             showSuccessBanner(true, "Gửi yêu cầu xác minh thành công")
+                            loginViewModel.resetState()
                         }
                     }
                 }

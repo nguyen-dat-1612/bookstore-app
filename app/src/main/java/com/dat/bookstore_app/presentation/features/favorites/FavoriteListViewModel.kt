@@ -87,11 +87,14 @@ class FavoriteListViewModel @Inject constructor(
                     }
                 }
             } finally {
-                updateState {
-                    copy(addCartSuccess = false)
-                }
                 dispatchStateLoading(false)
             }
+        }
+    }
+
+    fun resetState() {
+        updateState {
+            copy(addCartSuccess = false)
         }
     }
 
