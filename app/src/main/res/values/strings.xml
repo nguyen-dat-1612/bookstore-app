@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Fahasa Fake</string>
+    <string name="app_name">Book Shop</string>
     <string name="sign_up_question">Bạn chưa có tài khoản?</string>
     <string name="sign_up_action">Đăng ký tài khoản</string>
     <!-- TODO: Remove or change this placeholder text -->
@@ -33,8 +33,7 @@
 
     <string name="label_email">Email <font color="#FF0000"><b>*</b></font></string>
     <string name="hint_email">Nhập địa chỉ email (ví dụ: nguyenvana@example.com)</string>
-    <string name="note_password">
-    <b>Lưu ý: </b> <font color="#000000">Mật khẩu phải từ 8–64 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt, không chứa khoảng trắng</font>
+    <string name="note_password"><b>Lưu ý: </b> <font color="#000000">Mật khẩu phải từ 8–64 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt, không chứa khoảng trắng</font>
     </string>
-
+    <string name="payment">9704198526191432198</string>
 </resources>

@@ -200,8 +200,9 @@ class PaymentFragment : BaseFragment<FragmentPaymentBinding>() {
 
     private fun setUpUi(uiState: PaymentUiState) = with(binding) {
         subtotalValue.text = CurrencyUtils.formatVND(uiState.subtotal)
-        shippingValue.text = CurrencyUtils.formatVND(uiState.shipping)
-        totalValue.text = CurrencyUtils.formatVND(uiState.total)
+//        shippingValue.text = CurrencyUtils.formatVND(uiState.shipping)
+//        totalValue.text = CurrencyUtils.formatVND(uiState.total)
+        totalValue.text = CurrencyUtils.formatVND(uiState.subtotal)
         adapter.submitList(uiState.cartList)
 
         if (uiState.listAddress.isEmpty()) {

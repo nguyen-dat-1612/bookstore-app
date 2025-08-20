@@ -49,6 +49,7 @@
                     android:layout_height="48dp"
                     android:src="@drawable/logo"
                     android:paddingTop="10dp"
+                    android:visibility="invisible"
                     android:paddingBottom="10dp"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

@@ -88,7 +88,7 @@ class RegisterFragment : BaseFragment<FragmentRegisterBinding>() {
                 }
                 false
             } else {
-                errorView.visibility = View.GONE
+                errorView.visibility = View.INVISIBLE
                 true
             }
         }

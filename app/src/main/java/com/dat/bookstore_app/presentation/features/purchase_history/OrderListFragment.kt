@@ -1,6 +1,10 @@
 package com.dat.bookstore_app.presentation.features.purchase_history
 
+import android.app.AlertDialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +16,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dat.bookstore_app.R
+import com.dat.bookstore_app.databinding.DialogConfirmDeleteBinding
 import com.dat.bookstore_app.databinding.FragmentOrderListBinding
 import com.dat.bookstore_app.domain.enums.OrderStatus
 import com.dat.bookstore_app.domain.enums.Sort
@@ -42,7 +47,8 @@ class OrderListFragment : BaseFragment<FragmentOrderListBinding>() {
                 )
             },
             onCancelOrderClicked = {
-                viewModel.cancelOrder(it.id)
+                // Show dialog
+                showCancelOrderConfirmDialog(it.id)
             },
             onRetryPaymentClicked = {
                 navController.navigate(
@@ -138,6 +144,37 @@ class OrderListFragment : BaseFragment<FragmentOrderListBinding>() {
 
             }
         }
+    }
+
+    private fun showCancelOrderConfirmDialog(orderId: Long) {
+        val binding = DialogConfirmDeleteBinding.inflate(layoutInflater)
+
+        binding.tvMessage.text = "Bạn có chắc chắn hủy đơn hàng này không?"
+        binding.btnCancel.text = "Giữ lại"
+        binding.btnConfirm.text = "Hủy đơn"
+
+        val alertDialog = AlertDialog.Builder(requireContext())
+            .setView(binding.root)
+            .setCancelable(true)
+            .create()
+
+        binding.btnCancel.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        binding.btnConfirm.setOnClickListener {
+            viewModel.cancelOrder(orderId)
+            alertDialog.dismiss()
+        }
+
+        alertDialog.show()
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        // 80% chiều rộng màn hình
+        val displayMetrics = DisplayMetrics()
+        requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val dialogWidth = (displayMetrics.widthPixels * 0.7).toInt()
+        alertDialog.window?.setLayout(dialogWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     companion object {
